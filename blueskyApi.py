@@ -34,6 +34,21 @@ def getUserFeedPlus(actor, limit, cursor=None):
         print(f"Ocorreu um erro: {e}")
         return None
 
+def search_posts(query, limit):
+  url = "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
+  params = {"q": query, "limit": limit}
+  try:
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+      return response.json()
+    else:
+      print(f"Erro: {response.status_code} - {response.text}")
+      return None
+  except Exception as e:
+    print(f"Ocorreu um erro: {e}")
+    return None
+
 def collectPosts(actor, limit, iterations):
     all_posts = []
     cursor = None
