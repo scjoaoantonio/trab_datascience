@@ -3,6 +3,8 @@ import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import pandas as pd
+import streamlit as st
 
 nltk.download('stopwords')
 
@@ -55,19 +57,32 @@ def collectPosts(actor, limit, iterations):
 
             record = post.get('post', {}).get('record', {})
             text = record.get('text')
+            author = post.get('post', {}).get('author', {})
+            embed = record.get('embed', {}).get('images', [])
+
+            image_ref = embed[0].get('image', {}).get('ref', {}).get('$link') if embed else None
+
             if text:
+                # Armazena o texto original
+                original_text = text
+
+                # Limpa o texto usando a função cleanText
                 tokens = cleanText(text)
                 clean = ' '.join(tokens)
 
                 postData = {
-                    'texto_limpo': clean,
+                    'texto_original': original_text,  # Armazena o texto original
+                    'texto_limpo': clean,  # Armazena o texto limpo
                     'tokens': tokens,
                     'comentarios': replyCount,
                     'likes': likeCount,
                     'compartilhamentos': repostCount,
                     'repostagens': quoteCount,
                     'total': total,
-                    'data_hora': timestamp
+                    'data_hora': timestamp,
+                    'author_handle': author.get('handle', ''),
+                    'author_displayName': author.get('displayName', ''),
+                    'image_ref': image_ref
                 }
                 all_posts.append(postData)
 
@@ -77,3 +92,37 @@ def collectPosts(actor, limit, iterations):
 
     print(f"Total de posts coletados: {len(all_posts)}")
     return all_posts
+
+# Streamlit: Exibir o texto original e o texto limpo
+if st.button("Analisar"):
+    actor = st.text_input("Digite o handle do ator:")
+    limit = st.number_input("Limite de posts:", min_value=1, value=10)
+    iterations = st.number_input("Número de iterações:", min_value=1, value=5)
+
+    if actor:
+        st.write("Coletando dados...")
+        posts = collectPosts(actor, limit, iterations)
+
+        if posts:
+            st.write(f"Total de posts coletados: {len(posts)}")
+
+            # Criar DataFrame
+            df = pd.DataFrame(posts)
+
+            # Posts com mais engajamento
+            st.write("### Posts com Mais Engajamento")
+            top_posts = df.sort_values(by='total', ascending=False).head(5)
+
+            for _, row in top_posts.iterrows():
+                st.write(f"**Usuário:** {row['author_handle']} - **Nome:** {row['author_displayName']}")
+
+                # Exibir o texto original e o texto limpo
+                st.write(f"**Texto Original:** {row['texto_original']}")
+                st.write(f"**Texto Limpo:** {row['texto_limpo']}")
+
+                # Verificar se há imagens associadas ao post
+                image_ref = row['image_ref']
+                if image_ref:
+                    st.image(image_ref, caption="Imagem do Post", use_column_width=True)
+
+                st.write(f"**Engajamento Total:** {row['total']}\n---")
