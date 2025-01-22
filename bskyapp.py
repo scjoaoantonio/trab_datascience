@@ -31,48 +31,47 @@ def getUserFeedPlus(actor, limit, cursor=None):
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
         return None
-    
+
 def collectPosts(actor, limit, iterations):
     all_posts = []
-    cursor = None  # Inicializa o cursor como None
+    cursor = None
 
     for i in range(iterations):
         print(f"Coletando lote {i + 1} de posts...")
         result = getUserFeedPlus(actor, limit=limit, cursor=cursor)
-        posts = result.get('feed')
-        cursor = result.get('cursor')  # Atualiza o cursor para a próxima iteração
-
-        if posts:
-            for post in posts:
-                replyCount = post.get('post', {}).get('replyCount', 0)
-                repostCount = post.get('post', {}).get('repostCount', 0)
-                likeCount = post.get('post', {}).get('likeCount', 0)
-                quoteCount = post.get('post', {}).get('quoteCount', 0)
-                timestamp = post.get('post', {}).get('indexedAt')
-                total = replyCount + repostCount + likeCount + quoteCount
-
-                record = post.get('post', {}).get('record', {})
-                text = record.get('text')
-                if text:
-                    tokens = cleanText(text)
-                    clean = ' '.join(tokens)
-
-                    postData = {
-                        'texto_limpo': clean,
-                        'tokens': tokens,
-                        'comentarios': replyCount,
-                        'likes': likeCount,
-                        'compartilhamentos': repostCount,
-                        'repostagens': quoteCount,
-                        'total': total,
-                        'data_hora': timestamp
-                    }
-                    all_posts.append(postData)
-        else:
-            print("Nenhum post encontrado ou limite da API atingido.")
+        if not result:
             break
 
-        if not cursor:  # Encerra o loop se não houver mais cursor
+        posts = result.get('feed', [])
+        cursor = result.get('cursor', None)
+
+        for post in posts:
+            replyCount = post.get('post', {}).get('replyCount', 0)
+            repostCount = post.get('post', {}).get('repostCount', 0)
+            likeCount = post.get('post', {}).get('likeCount', 0)
+            quoteCount = post.get('post', {}).get('quoteCount', 0)
+            timestamp = post.get('post', {}).get('indexedAt')
+            total = replyCount + repostCount + likeCount + quoteCount
+
+            record = post.get('post', {}).get('record', {})
+            text = record.get('text')
+            if text:
+                tokens = cleanText(text)
+                clean = ' '.join(tokens)
+
+                postData = {
+                    'texto_limpo': clean,
+                    'tokens': tokens,
+                    'comentarios': replyCount,
+                    'likes': likeCount,
+                    'compartilhamentos': repostCount,
+                    'repostagens': quoteCount,
+                    'total': total,
+                    'data_hora': timestamp
+                }
+                all_posts.append(postData)
+
+        if not cursor:
             print("Fim dos dados disponíveis.")
             break
 
