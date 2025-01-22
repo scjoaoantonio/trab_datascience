@@ -57,11 +57,8 @@ if st.button("Analisar"):
             top_posts = df.sort_values(by='total', ascending=False).head(5)
 
             for _, row in top_posts.iterrows():
-                st.write(f"**Usuário:** {row['author_handle']} - **Nome:** {row['author_displayName']}")
-
-                # Exibir o texto original do post
-                original_text = row.get("record", {}).get("text", "Texto original não disponível")
-                st.write(f"**Texto Original:** {original_text}")
+                st.write(f"**Nome:** {row['author_displayName']} - **Usuário:** {row['author_handle']}")
+                st.write(f"**Texto Original:** {row['texto_original']}")
 
                 # Verificar se há imagens associadas ao post
                 embed = row.get("record", {}).get("embed", {})
