@@ -13,7 +13,7 @@ def get_top_tokens(df):
     return pd.DataFrame(list(token_engagement.items()), columns=['Token', 'Engajamento']).sort_values(by='Engajamento', ascending=False).head(10)
 
 def usersPage():
-    st.title("Análise de Posts do Bluesky")
+    st.title("Analisar Posts de um Usuário")
 
     actor = st.text_input("Digite o @ do usuário:", value="cruzeiro.com.br", key="actor_input")
     limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=10, key="limit_input")

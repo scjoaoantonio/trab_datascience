@@ -47,7 +47,7 @@ def buscar_e_processar_posts(tema, limit):
 
 # Página principal da aplicação Streamlit
 def topicPage():
-    st.title("Busca e Processamento de Posts com Bluesky API")
+    st.title("Analisar Posts Sobre um Tema")
 
     # Entrada do usuário para definir as palavras-chave e o limite de posts
     tema = st.text_input("Digite o tema para buscar os posts (exemplo: Cruzeiro):", "Cruzeiro")
