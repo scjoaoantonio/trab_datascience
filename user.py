@@ -15,11 +15,12 @@ def get_top_tokens(df):
 def usersPage():
     st.title("Análise de Posts do Bluesky")
 
-    actor = st.text_input("Digite o @ do usuário (exemplo: user.bsky.social):",value="cruzeiro.com.br")
-    limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=10)
-    iterations = st.number_input("Número de iterações:", min_value=1, max_value=10, value=3)
+    actor = st.text_input("Digite o @ do usuário:", value="cruzeiro.com.br", key="actor_input")
+    limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=10, key="limit_input")
+    iterations = st.number_input("Número de iterações:", min_value=1, max_value=10, value=3, key="iterations_input")
 
-    if st.button("Analisar"):
+
+    if st.button("Analisar", key="analyze_button"):
         if actor:
             st.write("Coletando dados...")
             posts = collectPosts(actor, limit, iterations)
