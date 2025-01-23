@@ -8,13 +8,20 @@ import streamlit as st
 
 nltk.download('stopwords')
 
-def cleanText(text):
+def cleanText(text, language):
     text = text.lower()
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     text = re.sub(r'[^\w\s]', '', text)
     text = re.sub(r'\d+', '', text)
-    tokens = word_tokenize(text, language='portuguese')
-    stop_words = set(stopwords.words('portuguese'))
+    
+    tokens = word_tokenize(text, language=language)
+    
+    # Definir as stop words com base no idioma
+    if language == 'portuguese':
+        stop_words = set(stopwords.words('portuguese'))
+    else:  # Assume que o idioma é inglês
+        stop_words = set(stopwords.words('english'))
+
     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
     return tokens_sem_stopwords
 
@@ -49,7 +56,7 @@ def search_posts(query, limit):
     print(f"Ocorreu um erro: {e}")
     return None
 
-def collectPosts(actor, limit, iterations):
+def collectPosts(actor, limit, iterations,language):
     all_posts = []
     cursor = None
 
@@ -82,7 +89,7 @@ def collectPosts(actor, limit, iterations):
                 original_text = text
 
                 # Limpa o texto usando a função cleanText
-                tokens = cleanText(text)
+                tokens = cleanText(text,language)
                 clean = ' '.join(tokens)
 
                 postData = {
