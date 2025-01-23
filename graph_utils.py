@@ -1,55 +1,53 @@
-# Arquivo: graph_utils.py
-
 import seaborn as sns
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import streamlit as st
 
-# Função para visualizar a distribuição dos valores dos atributos numéricos
+# Função para visualizar a distribuição dos valores
 def distribution_values(df):
     numeric_columns = ['comentarios', 'likes', 'compartilhamentos', 'repostagens']
     sns.set(style="whitegrid")
 
     for column in numeric_columns:
-        plt.figure(figsize=(12, 5))
-
+        fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+        
         # Histograma
-        plt.subplot(1, 2, 1)
-        sns.histplot(df[column], bins=20, kde=True)
-        plt.title(f'Histograma de {column}')
-        plt.xlabel(column)
-        plt.ylabel('Frequência')
-
+        sns.histplot(df[column], bins=20, kde=True, ax=ax[0])
+        ax[0].set_title(f'Histograma de {column}')
+        ax[0].set_xlabel(column)
+        ax[0].set_ylabel('Frequência')
+        
         # Box-plot
-        plt.subplot(1, 2, 2)
-        sns.boxplot(x=df[column])
-        plt.title(f'Box-plot de {column}')
-        plt.xlabel(column)
+        sns.boxplot(x=df[column], ax=ax[1])
+        ax[1].set_title(f'Box-plot de {column}')
+        ax[1].set_xlabel(column)
+        
+        st.pyplot(fig)
 
-        plt.tight_layout()
-        plt.show()
-
-# Função para analisar a correlação entre atributos numéricos
+# Função para analisar a correlação
 def analyze_correlation(df):
     numeric_columns = ['comentarios', 'likes', 'compartilhamentos', 'repostagens', 'total']
-    correlation_matrix = df[numeric_columns].corr()
+    matriz_correlacao = df[numeric_columns].corr()
 
-    plt.figure(figsize=(10, 8))
-    sns.set(style="white")
+    # Mostrar a matriz de correlação como texto
+    st.write("Matriz de Correlação:")
+    st.dataframe(matriz_correlacao)
 
-    # Mapa de calor
-    sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm', cbar=True,
-                square=True, linewidths=0.5, linecolor='black')    
-    plt.title('Mapa de Calor da Correlação Entre Atributos')
-    plt.show()
+    # Criar mapa de calor
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(matriz_correlacao, annot=True, fmt=".2f", cmap='coolwarm', cbar=True, square=True,
+                linewidths=0.5, linecolor='black', ax=ax)
+    ax.set_title('Mapa de Calor da Correlação Entre Atributos')
+    st.pyplot(fig)
 
-# Função para gerar uma nuvem de palavras a partir de uma lista de tokens
+# Função para gerar WordCloud
 def generate_wordcloud(tokens_list):
     all_tokens = ' '.join([' '.join(tokens) for tokens in tokens_list])
     wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='viridis').generate(all_tokens)
 
-    # Exibir a nuvem de palavras
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    plt.title("WordCloud das Palavras Mais Frequentes", fontsize=16)
-    plt.show()
+    # Exibir WordCloud
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.imshow(wordcloud, interpolation='bilinear')
+    ax.axis('off')
+    ax.set_title("WordCloud das Palavras Mais Frequentes", fontsize=16)
+    st.pyplot(fig)

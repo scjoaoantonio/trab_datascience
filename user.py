@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from blueskyApi import collectPosts
+from graph_utils import distribution_values, analyze_correlation, generate_wordcloud
 
 def get_top_tokens(df):
     token_engagement = {}
@@ -19,7 +20,6 @@ def usersPage():
     limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=10, key="limit_input")
     iterations = st.number_input("Número de iterações:", min_value=1, max_value=10, value=3, key="iterations_input")
 
-
     if st.button("Analisar", key="analyze_button"):
         if actor:
             st.write("Coletando dados...")
@@ -31,18 +31,17 @@ def usersPage():
                 # Criar DataFrame
                 df = pd.DataFrame(posts)
 
-                # Gráfico de interações
-                st.write("### Interações nos Posts")
-                fig, ax = plt.subplots()
-                df[['comentarios', 'likes', 'compartilhamentos', 'repostagens']].sum().plot(kind='bar', ax=ax)
-                ax.set_ylabel("Quantidade")
-                ax.set_title("Interações nos Posts")
-                st.pyplot(fig)
+                # Gráfico de distribuição de valores
+                st.write("### Distribuição dos Valores")
+                distribution_values(df)
 
-                # Palavras mais frequentes
-                st.write("### Palavras Mais Frequentes")
-                word_count = pd.Series([word for tokens in df['tokens'] for word in tokens]).value_counts().head(10)
-                st.bar_chart(word_count)
+                # Análise de correlação
+                st.write("### Correlação Entre os Atributos")
+                analyze_correlation(df)
+
+                # WordCloud
+                st.write("### WordCloud das Palavras Mais Frequentes")
+                generate_wordcloud(df['tokens'])
 
                 # Tokens com mais engajamento
                 st.write("### Tokens com Mais Engajamento")
@@ -71,10 +70,6 @@ def usersPage():
                                 st.image(image_url, caption="Imagem do Post", use_column_width=True)
 
                     st.write(f"**Engajamento Total:** {row['total']}\n---")
-
-
-
-
 
                 # Gráfico de evolução temporal
                 st.write("### Evolução Temporal de Engajamento")
