@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 from blueskyApi import collectPosts
 from graph_utils import distribution_values, analyze_correlation, generate_wordcloud
+from mining import analyzeSentiment, topicModeling
+
 
 def get_top_tokens(df):
     token_engagement = {}
@@ -28,39 +29,30 @@ def usersPage():
             if posts:
                 st.write(f"Total de posts coletados: {len(posts)}")
 
-                # Criar DataFrame
                 df = pd.DataFrame(posts)
 
-                # Baixar CSV
                 st.write("### Baixar Dados como CSV")
                 csv = df.to_csv(index=False)
                 st.download_button(label="Baixar CSV", data=csv, file_name="dados_posts.csv", mime="text/csv")
 
-                # WordCloud
                 st.write("### WordCloud das Palavras Mais Frequentes")
                 generate_wordcloud(df['tokens'])
 
-                # Gráfico de evolução temporal
                 st.write("### Evolução Temporal de Engajamento")
                 df['data_hora'] = pd.to_datetime(df['data_hora'])
                 temporal_data = df.groupby(df['data_hora'].dt.date)['total'].sum()
                 st.line_chart(temporal_data)
 
-
-                # Gráfico de distribuição de valores
                 st.write("### Distribuição dos Valores")
                 distribution_values(df)
 
-                # Análise de correlação
                 st.write("### Correlação Entre os Atributos")
                 analyze_correlation(df)
 
-                # Tokens com mais engajamento
                 st.write("### Tokens com Mais Engajamento")
                 top_tokens = get_top_tokens(df)
                 st.dataframe(top_tokens)
 
-                # Posts com mais engajamento
                 st.write("### Posts com Mais Engajamento")
                 top_posts = df.sort_values(by='total', ascending=False).head(5)
 
@@ -68,7 +60,6 @@ def usersPage():
                     st.write(f"**{row['author_displayName']}** (@{row['author_handle']}) - **Engajamento:** {row['total']}")
                     st.write(f"**Texto Original:** {row['texto_original']}")
 
-                    # Verificar se há imagens associadas ao post
                     embed = row.get("record", {}).get("embed", {})
                     if embed.get("$type") == "app.bsky.embed.images#view":
                         for image in embed.get("images", []):
@@ -76,7 +67,15 @@ def usersPage():
                             if image_url:
                                 st.image(image_url, caption="Imagem do Post", use_column_width=True)
 
-                    # st.write(f"**Engajamento Total:** {row['total']}\n---")
+                st.write("### Análise de Sentimentos dos Top Posts")
+                top_posts = analyzeSentiment(top_posts)
+                st.dataframe(top_posts[['texto_original', 'neg', 'neu', 'pos', 'compound']])
+
+                st.write("### Modelagem de Tópicos dos Top Posts")
+                topics = topicModeling(top_posts, num_topics=3, passes=5)
+                st.write("### Principais Tópicos Identificados:")
+                for topic in topics:
+                    st.write(f"Tópico {topic[0]}: {topic[1]}")
 
             else:
                 st.error("Nenhum dado encontrado para o usuário informado.")
