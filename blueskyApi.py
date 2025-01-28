@@ -148,3 +148,32 @@ if st.button("Analisar"):
                     st.image(image_ref, caption="Imagem do Post", use_column_width=True)
 
                 st.write(f"**Engajamento Total:** {row['total']}\n---")
+
+def getUserFollows(actor, limit):
+  url = "https://public.api.bsky.app/xrpc/app.bsky.graph.getFollows"
+  params = {"actor": actor, "limit": limit}
+  try:
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+      return response.json()
+    else:
+      print(f"Erro: {response.status_code} - {response.text}")
+      return None
+  except Exception as e:
+    print(f"Ocorreu um erro: {e}")
+    return None
+  
+def getUserFollowers(actor, limit):
+  url = "https://public.api.bsky.app/xrpc/app.bsky.graph.getFollowers"
+  params = {"actor": actor, "limit": limit}
+  try:
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+      return response.json()
+    else:
+      print(f"Erro: {response.status_code} - {response.text}")
+      return None
+  except Exception as e:
+    print(f"Ocorreu um erro: {e}")
+    return None
+  

@@ -130,13 +130,6 @@ def generate_wordcloud(tokens_list):
     ax.set_title("WordCloud das Palavras Mais Frequentes", fontsize=16)
     st.pyplot(fig)
 
-def networkPage():
-    import streamlit as st
-import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
-import blueskyApi
-
 # Função para remover duplicados
 def remove_repetidos(vetor):
     return list(set(vetor))
@@ -147,10 +140,11 @@ def coletar_seguidores_e_seguidos(autores):
     seguidos_por_autor = {}
 
     for autor in autores:
-        seguidores_por_autor[autor] = [f.get("handle") for f in blueskyApi.getUserFollowers(autor, 100)]
-        seguidos_por_autor[autor] = [f.get("handle") for f in blueskyApi.getUserFollows(autor, 100)]
+        seguidores_por_autor[autor] = blueskyApi.getUserFollowers(autor, 100)  # Directly assign the list of handles
+        seguidos_por_autor[autor] = blueskyApi.getUserFollows(autor, 100)  # Directly assign the list of handles
 
     return seguidores_por_autor, seguidos_por_autor
+
 
 # Função para construir a rede
 def construir_rede(seguidores_por_autor, seguidos_por_autor):
@@ -258,7 +252,7 @@ def networkPage():
         # Exportar os dados para arquivos CSV
         st.write("Exportando dados...")
         df_posts = pd.DataFrame({"Texto": textos_gerais, "Usuario": autores_gerais})
-        df_posts.to_csv("output/posts.csv", index=False)
+        df_posts.to_csv("posts.csv", index=False)
 
         data_seguidores = {"Usuario": [], "Seguidores": [], "Seguidos": []}
         for autor in seguidores_por_autor:
@@ -267,10 +261,10 @@ def networkPage():
             data_seguidores["Seguidos"].append(", ".join(seguidos_por_autor[autor]))
 
         df_relacoes = pd.DataFrame(data_seguidores)
-        df_relacoes.to_csv("output/relacoes_seguidores.csv", index=False)
+        df_relacoes.to_csv("relacoes_seguidores.csv", index=False)
 
         st.success("Análise concluída!")
         st.markdown("""
-        - **Posts** salvos em `output/posts.csv`
-        - **Relações de seguidores/seguidos** salvas em `output/relacoes_seguidores.csv`
+        - **Posts** salvos em `posts.csv`
+        - **Relações de seguidores/seguidos** salvas em `relacoes_seguidores.csv`
         """)
