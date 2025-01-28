@@ -9,20 +9,17 @@ def distribution_values(df):
     sns.set(style="whitegrid")
 
     for column in numeric_columns:
-        fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+        # Criando figura apenas para o histograma
+        fig, ax = plt.subplots(figsize=(6, 5))
         
         # Histograma
-        sns.histplot(df[column], bins=20, kde=True, ax=ax[0])
-        ax[0].set_title(f'Histograma de {column}')
-        ax[0].set_xlabel(column)
-        ax[0].set_ylabel('Frequência')
-        
-        # Box-plot
-        sns.boxplot(x=df[column], ax=ax[1])
-        ax[1].set_title(f'Box-plot de {column}')
-        ax[1].set_xlabel(column)
+        sns.histplot(df[column], bins=20, kde=True, ax=ax)
+        ax.set_title(f'Histograma de {column}')
+        ax.set_xlabel(column)
+        ax.set_ylabel('Frequência')
         
         st.pyplot(fig)
+
 
 # Função para analisar a correlação
 def analyze_correlation(df):
