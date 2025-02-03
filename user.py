@@ -3,6 +3,7 @@ import pandas as pd
 from blueskyApi import collectPosts
 from graph_utils import distribution_values, analyze_correlation, generate_wordcloud
 from mining import analyzeSentiment, topicModeling
+from arima_model import train_arima
 
 def get_top_tokens(df):
     token_engagement = {}
@@ -46,6 +47,11 @@ def usersPage():
                 df['data_hora'] = pd.to_datetime(df['data_hora'])
                 temporal_data = df.groupby(df['data_hora'].dt.date)['total'].sum()
                 st.line_chart(temporal_data)
+
+                # PREVISÃO DE ENGAJAMENTO COM ARIMA
+                st.write("### Previsão de Engajamento para os Próximos Dias")
+                forecast_days = st.slider("Escolha o número de dias para previsão:", 3, 30, 7)
+                train_arima(df, forecast_days)
 
                 st.write("### Distribuição dos Valores")
                 distribution_values(df)
