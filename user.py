@@ -17,14 +17,15 @@ def get_top_tokens(df):
 def usersPage():
     st.title("Analisar Posts de um Usuário")
 
-    # Opção para escolher o idioma
-    language = st.radio("Escolha o idioma:", ('Português', 'Inglês'), key="language_radio")
-    language_code = 'portuguese' if language == 'Português' else 'english'
-
     actor = st.text_input("Digite o @ do usuário:", value="cruzeiro.com.br", key="actor_input")
     limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=10, key="limit_input")
     iterations = st.number_input("Número de iterações:", min_value=1, max_value=100, value=3, key="iterations_input")
+    forecast_days =  st.radio("Quantidade de dias para previsão de engajamento:", (3,7,30), key="days_radio")
 
+    # Opção para escolher o idioma
+    language = st.radio("Escolha o idioma:", ('Português', 'Inglês'), key="language_radio")
+    language_code = 'portuguese' if language == 'Português' else 'english'
+    
     # Botão "Analisar"
     if st.button("Analisar", key="analyze_button"):
         if actor:
@@ -50,7 +51,6 @@ def usersPage():
 
                 # PREVISÃO DE ENGAJAMENTO COM ARIMA
                 st.write("### Previsão de Engajamento para os Próximos Dias")
-                forecast_days = st.slider("Escolha o número de dias para previsão:", 3, 30, 7)
                 train_arima(df, forecast_days)
 
                 st.write("### Distribuição dos Valores")
