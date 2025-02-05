@@ -95,7 +95,7 @@ def SaveCSV(postsData, fileName):
         print("Nenhum dado disponível para salvar no CSV.")
 
 if __name__ == "__main__":
-    actor = "nytimes.com"
+    actor = "cruzeiro.com.br"
     limit = 100  # Número de posts por lote
     iterations = 100  # Número de lotes a serem coletados
 

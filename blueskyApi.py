@@ -83,6 +83,7 @@ def collectPosts(actor, limit, iterations,language):
             embed = record.get('embed', {}).get('images', [])
 
             image_ref = embed[0].get('image', {}).get('ref', {}).get('$link') if embed else None
+            image_ref = True if image_ref else False
 
             if text:
                 # Armazena o texto original
