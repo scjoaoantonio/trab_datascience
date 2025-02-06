@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from wordcloud import WordCloud
 
-# Imports de funções customizadas (certifique-se de que os módulos existam e estejam implementados)
+# Imports de funções customizadas
 from blueskyApi import collectPosts
-from mining import analyzeSentiment, topicModeling
+from mining import analyzeSentiment
 
 # ----------------------------
 # Funções de Pré-processamento e Visualização
@@ -51,8 +51,6 @@ def analyze_correlation(df):
     matriz_correlacao = df[numeric_columns].corr()
 
     st.write("### Matriz de Correlação")
-    # st.dataframe(matriz_correlacao)
-
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(matriz_correlacao, annot=True, fmt=".2f", cmap='coolwarm', cbar=True, square=True,
                 linewidths=0.5, linecolor='black', ax=ax)
@@ -60,6 +58,7 @@ def analyze_correlation(df):
     st.pyplot(fig)
 
 def get_top_tokens(df, top_n=10):
+
     """
     Retorna um DataFrame com os tokens que acumularam maior engajamento.
     """
@@ -75,10 +74,11 @@ def get_top_tokens(df, top_n=10):
 # ----------------------------
 
 def train_arima(df, forecast_days):
+    
     """
     Realiza a previsão do engajamento dos posts para os próximos dias utilizando ARIMA.
     """
-    # st.write("## Previsão de Engajamento com ARIMA")
+
     # Converte a coluna 'data_hora' para datetime e ordena os dados
     df['data_hora'] = pd.to_datetime(df['data_hora'])
     df = df.sort_values('data_hora')
@@ -108,9 +108,11 @@ def train_arima(df, forecast_days):
 # ----------------------------
 
 def analyze_post_features(df):
+
     """
     Analisa características dos posts que possam estar associadas a engajamento alto ou baixo.
     """
+    
     st.write("## Análise de Características dos Posts Relacionadas ao Engajamento")
     
     # 1. Quantidade de caracteres
