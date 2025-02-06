@@ -51,7 +51,7 @@ def analyze_correlation(df):
     matriz_correlacao = df[numeric_columns].corr()
 
     st.write("### Matriz de Correlação")
-    st.dataframe(matriz_correlacao)
+    # st.dataframe(matriz_correlacao)
 
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(matriz_correlacao, annot=True, fmt=".2f", cmap='coolwarm', cbar=True, square=True,
@@ -78,7 +78,7 @@ def train_arima(df, forecast_days):
     """
     Realiza a previsão do engajamento dos posts para os próximos dias utilizando ARIMA.
     """
-    st.write("## Previsão de Engajamento com ARIMA")
+    # st.write("## Previsão de Engajamento com ARIMA")
     # Converte a coluna 'data_hora' para datetime e ordena os dados
     df['data_hora'] = pd.to_datetime(df['data_hora'])
     df = df.sort_values('data_hora')
@@ -99,9 +99,9 @@ def train_arima(df, forecast_days):
     
     # Realiza a previsão para os próximos 'forecast_days' dias
     forecast = model_fit.forecast(steps=forecast_days)
-    st.write("### Previsão para os Próximos Dias")
+    st.write("### Previsão para os Próximos Dias - ARIMA")
     st.line_chart(forecast)
-    st.dataframe(forecast.reset_index().rename(columns={'index': 'Data', 0: 'Engajamento Previsto'}))
+    # st.dataframe(forecast.reset_index().rename(columns={'index': 'Data', 0: 'Engajamento Previsto'}))
 
 # ----------------------------
 # Análise de Características dos Posts
@@ -123,7 +123,7 @@ def analyze_post_features(df):
     
     # Exibe correlação entre número de caracteres e engajamento
     corr_chars = df[['num_caracteres', 'total']].corr().iloc[0, 1]
-    st.write(f"Correlação entre número de caracteres e engajamento: {corr_chars:.2f}")
+    # st.write(f"Correlação entre número de caracteres e engajamento: {corr_chars:.2f}")
     
     # 2. Horário de Postagem
     df['hora'] = pd.to_datetime(df['data_hora']).dt.hour
@@ -164,11 +164,11 @@ def identify_patterns(top_posts):
     sentiment_data = analyzeSentiment(top_posts)
     st.dataframe(sentiment_data[['texto_original', 'neg', 'neu', 'pos', 'compound']])
     
-    # Modelagem de Tópicos
-    st.write("#### Modelagem de Tópicos")
-    topics = topicModeling(top_posts, num_topics=3, passes=5)
-    for topic in topics:
-        st.write(f"Tópico {topic[0]}: {topic[1]}")
+    # # Modelagem de Tópicos
+    # st.write("#### Modelagem de Tópicos")
+    # topics = topicModeling(top_posts, num_topics=3, passes=5)
+    # for topic in topics:
+    #     st.write(f"Tópico {topic[0]}: {topic[1]}")
     
     # Horário de Postagem
     st.write("#### Horário de Postagem")
@@ -210,15 +210,8 @@ def usersPage():
                 st.write("### WordCloud das Palavras Mais Frequentes")
                 generate_wordcloud(df['tokens'])
                 
-                # Evolução temporal de engajamento
-                st.write("### Evolução Temporal de Engajamento")
-                df['data_hora'] = pd.to_datetime(df['data_hora'])
-                temporal_data = df.groupby(df['data_hora'].dt.date)['total'].sum()
-                st.line_chart(temporal_data)
-                
-                # Previsão de engajamento utilizando ARIMA
-                st.write("### Previsão de Engajamento para os Próximos Dias")
-                train_arima(df, forecast_days)
+  
+
                 
                 # Distribuição dos valores (comentários, likes, compartilhamentos, repostagens)
                 st.write("### Distribuição dos Valores")
@@ -228,10 +221,10 @@ def usersPage():
                 st.write("### Correlação Entre os Atributos")
                 analyze_correlation(df)
                 
-                # Exibe os tokens com maior engajamento
-                st.write("### Tokens com Mais Engajamento")
-                top_tokens = get_top_tokens(df)
-                st.dataframe(top_tokens)
+                # # Exibe os tokens com maior engajamento
+                # st.write("### Tokens com Mais Engajamento")
+                # top_tokens = get_top_tokens(df)
+                # st.dataframe(top_tokens)
                 
                 # Exibe os posts com maior engajamento
                 st.write("### Posts com Maior Engajamento")
@@ -253,6 +246,17 @@ def usersPage():
                 
                 # Identificação de padrões nos posts de maior engajamento
                 identify_patterns(top_posts)
+
+                # Evolução temporal de engajamento
+                # st.write("### Evolução Temporal de Engajamento")
+                df['data_hora'] = pd.to_datetime(df['data_hora'])
+                temporal_data = df.groupby(df['data_hora'].dt.date)['total'].sum()
+                # st.line_chart(temporal_data)     
+
+                # Previsão de engajamento utilizando ARIMA
+                st.write("### Previsão de Engajamento para os Próximos Dias")
+                train_arima(df, forecast_days)
+                
             else:
                 st.error("Nenhum dado encontrado para o usuário informado.")
         else:
