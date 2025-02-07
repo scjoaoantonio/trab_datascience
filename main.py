@@ -41,9 +41,9 @@ with st.sidebar:
 
 if option == "Analisar Usuário":
     usersPage()
-elif option == "Analisar Tema":
-    topicPage()
-elif option == "Analisar Rede":
-    networkPage()
+# elif option == "Analisar Tema":
+#     topicPage()
+# elif option == "Analisar Rede":
+#     networkPage()
 elif option == "Apresentação":
     mainPage()
