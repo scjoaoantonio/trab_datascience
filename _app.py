@@ -45,7 +45,7 @@ def mainPage():
     )
 
     # Título da página
-    st.title("📊 Análise de Posts")
+    st.title("📊 Análise de Posts - NYTIMES")
 
     # Carregar imagens
     image_wordcloud = Image.open("img/wordcloud.png")
@@ -189,7 +189,7 @@ def mainPage():
     st.header("🌍 Palavras Frequentes em Posts Mais Engajados")
     st.write("Quais palavras aparecem com mais frequência em posts que tiveram alto engajamento?")
     st.image(image_engWordcloud, caption="WordCloud de Postagens com Maior Engajamento", use_column_width=True)
-    
+
     # ----------------------------
     # 💬 Análise de Sentimentos
     # ----------------------------

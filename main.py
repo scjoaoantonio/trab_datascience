@@ -32,18 +32,18 @@ st.markdown(
 with st.sidebar:
     option = option_menu(
         menu_title = "",
-        options = ["Analisar Usuário", "Analisar Tema", "Analisar Rede", "Apresentação"],
+        options = ["Apresentação","Analisar Usuário","Analisar Tema", "Analisar Rede"],
         icons = ["house","gear","activity","envelope"],
         menu_icon = "cast",
         default_index = 0,
         # orientation = "horizontal",
     )
 
-if option == "Analisar Usuário":
+if option == "Apresentação":
+    mainPage()
+elif option == "Analisar Usuário":
     usersPage()
 # elif option == "Analisar Tema":
 #     topicPage()
 # elif option == "Analisar Rede":
 #     networkPage()
-elif option == "Apresentação":
-    mainPage()
