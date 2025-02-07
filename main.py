@@ -5,12 +5,40 @@ from user import usersPage
 from topic import topicPage
 from network import networkPage
 from _app import mainPage
+from streamlit_option_menu import option_menu
 
-# Configurar o menu principal
-st.sidebar.title("Menu")
-option = st.sidebar.radio("Navegar para:", ["Analisar Usuário", "Analisar Tema", "Analisar Rede","Apresentação"])
+st.markdown(
+    """
+    <style>
+    /* Estilizar a barra lateral */
+    [data-testid="stSidebar"] {
+        background-color: #131722 !important;
+    }
+    
+    /* Estilizar os textos e ícones da barra lateral */
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    
+    /* Estilizar o fundo principal */
+    [data-testid="stAppViewContainer"] {
+        background-color: #0E1117 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-# Exibir a página escolhida
+with st.sidebar:
+    option = option_menu(
+        menu_title = "",
+        options = ["Analisar Usuário", "Analisar Tema", "Analisar Rede", "Apresentação"],
+        icons = ["house","gear","activity","envelope"],
+        menu_icon = "cast",
+        default_index = 0,
+        # orientation = "horizontal",
+    )
+
 if option == "Analisar Usuário":
     usersPage()
 elif option == "Analisar Tema":
