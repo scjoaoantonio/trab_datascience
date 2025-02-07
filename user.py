@@ -44,10 +44,7 @@ def usersPage():
                 # Exibe a WordCloud dos tokens
                 st.write("### WordCloud das Palavras Mais Frequentes")
                 graph.generate_wordcloud(df['tokens'])
-                
-  
-
-                
+                                
                 # Distribuição dos valores (comentários, likes, compartilhamentos, repostagens)
                 st.write("### Distribuição dos Valores")
                 graph.distribution_values(df)
