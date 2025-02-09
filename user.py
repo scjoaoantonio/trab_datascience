@@ -95,6 +95,7 @@ def usersPage():
                 # Análise de sentimentos e modelagem de tópicos
                 mining.analyzeSentiment(df)
                 mining.topicModeling(df)
+                mining.display_sentiment_by_state(df)
 
             else:
                 st.error("Nenhum dado encontrado para o usuário informado.")

@@ -2,7 +2,6 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import pyLDAvis
 import pyLDAvis.gensim_models as gensimvis
 from nltk.sentiment import SentimentIntensityAnalyzer
 from gensim import corpora
@@ -10,6 +9,8 @@ from gensim.models import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
 import nltk
 from wordcloud import WordCloud
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from collections import defaultdict
 
 # Baixar recursos necessários do NLTK
 nltk.download('vader_lexicon')
@@ -114,3 +115,76 @@ def topicModeling(df, num_topics=5, passes=10):
 #         num_topics = st.slider("Número de Tópicos", 2, 10, 5)
 #         passes = st.slider("Número de Passes", 5, 50, 10)
 #         topicModeling(df, num_topics, passes)
+
+def analyze_engagement_and_sentiment(df):
+    # Listas de estados dos EUA e países do mundo
+    estados_eua = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+    paises_mundo = ["United States", "Canada", "Mexico", "Brazil", "United Kingdom", "France", "Germany", "Italy", "Spain", "Russia", "China", "Japan", "India", "Australia", "South Africa", "Argentina", "Chile", "Colombia", "Peru", "Venezuela", "Saudi Arabia", "South Korea", "Turkey", "Egypt", "Nigeria", "Pakistan", "Bangladesh", "Indonesia", "Philippines", "Vietnam"]
+
+    # Instanciando o analisador de sentimentos
+    analyzer = SentimentIntensityAnalyzer()
+
+    # Função para analisar sentimentos por país
+    def sentiment_by_country(df):
+        sentiment_dict = defaultdict(list)
+        coluna_texto = "texto_original" if "texto_original" in df.columns else "texto_limpo"
+        
+        for text in df[coluna_texto].dropna():
+            countries_mentioned = [country for country in paises_mundo if country in text]
+            if countries_mentioned:
+                sentiment_score = analyzer.polarity_scores(text)["compound"]
+                for country in countries_mentioned:
+                    sentiment_dict[country].append(sentiment_score)
+
+        country_sentiments = {country: sum(sentiments) / len(sentiments) for country, sentiments in sentiment_dict.items()}
+        return country_sentiments
+
+    # Função para analisar sentimentos por estado
+    def sentiment_by_state(df):
+        sentiment_dict = defaultdict(list)
+        coluna_texto = "texto_original" if "texto_original" in df.columns else "texto_limpo"
+        
+        for text in df[coluna_texto].dropna():
+            states_mentioned = [state for state in estados_eua if state in text]
+            if states_mentioned:
+                sentiment_score = analyzer.polarity_scores(text)["compound"]
+                for state in states_mentioned:
+                    sentiment_dict[state].append(sentiment_score)
+
+        state_sentiments = {state: sum(sentiments) / len(sentiments) for state, sentiments in sentiment_dict.items()}
+        return state_sentiments
+
+    # Análise de sentimentos por país
+    country_sentiments = sentiment_by_country(df)
+
+    # Identificar países com sentimento mais positivo e negativo
+    most_positive_country = max(country_sentiments, key=country_sentiments.get)
+    most_negative_country = min(country_sentiments, key=country_sentiments.get)
+
+    # Análise de sentimentos por estado
+    state_sentiments = sentiment_by_state(df)
+
+    # Identificar estados com sentimento mais positivo e negativo
+    most_positive_state = max(state_sentiments, key=state_sentiments.get)
+    most_negative_state = min(state_sentiments, key=state_sentiments.get)
+
+    # Retornar os resultados
+    return {
+        "País Mais Positivo": (most_positive_country, country_sentiments[most_positive_country]),
+        "País Mais Negativo": (most_negative_country, country_sentiments[most_negative_country]),
+        "Estado Mais Positivo": (most_positive_state, state_sentiments[most_positive_state]),
+        "Estado Mais Negativo": (most_negative_state, state_sentiments[most_negative_state]),
+    }
+
+# Função Streamlit para exibir os resultados
+def display_sentiment_by_state(df):
+    # Obter os resultados da análise
+    resultados = analyze_engagement_and_sentiment(df)
+
+    # Exibir os resultados de forma amigável
+    st.header("Resultados de Sentimento por País e Estado")
+
+    st.subheader(f"País Mais Positivo: {resultados['País Mais Positivo'][0]} - {resultados['País Mais Positivo'][1]:.2f}")
+    st.subheader(f"País Mais Negativo: {resultados['País Mais Negativo'][0]} - {resultados['País Mais Negativo'][1]:.2f}")
+    st.subheader(f"Estado Mais Positivo: {resultados['Estado Mais Positivo'][0]} - {resultados['Estado Mais Positivo'][1]:.2f}")
+    st.subheader(f"Estado Mais Negativo: {resultados['Estado Mais Negativo'][0]} - {resultados['Estado Mais Negativo'][1]:.2f}")
