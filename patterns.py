@@ -69,33 +69,33 @@ def analyze_post_features(df):
 # Identificação de Padrões nos Posts de Maior Engajamento
 # ----------------------------
 
-def identify_patterns(top_posts):
-    """
-    Realiza análise de padrões dos posts de maior engajamento:
-      - Geração de wordcloud com os tokens mais frequentes.
-      - Análise de sentimentos.
-      - Modelagem de tópicos.
-      - Visualização do horário de postagem.
-    """
-    st.write("### Identificação de Padrões nos Posts de Maior Engajamento")
+# def identify_patterns(top_posts):
+#     """
+#     Realiza análise de padrões dos posts de maior engajamento:
+#       - Geração de wordcloud com os tokens mais frequentes.
+#       - Análise de sentimentos.
+#       - Modelagem de tópicos.
+#       - Visualização do horário de postagem.
+#     """
+#     st.write("### Identificação de Padrões nos Posts de Maior Engajamento")
     
-    # Palavras mais frequentes
-    st.write("#### Palavras Mais Frequentes")
-    graph.generate_wordcloud(top_posts['tokens'])
+#     # Palavras mais frequentes
+#     st.write("#### Palavras Mais Frequentes")
+#     graph.generate_wordcloud(top_posts['tokens'])
     
-    # Análise de Sentimentos
-    st.write("#### Análise de Sentimentos")
-    sentiment_data = mining.analyzeSentiment(top_posts)
-    st.dataframe(sentiment_data[['texto_original', 'neg', 'neu', 'pos', 'compound']])
+#     # Análise de Sentimentos
+#     st.write("#### Análise de Sentimentos")
+#     sentiment_data = mining.analyzeSentiment(top_posts)
+#     st.dataframe(sentiment_data[['texto_original', 'neg', 'neu', 'pos', 'compound']])
     
-    # # Modelagem de Tópicos
-    # st.write("#### Modelagem de Tópicos")
-    # topics = topicModeling(top_posts, num_topics=3, passes=5)
-    # for topic in topics:
-    #     st.write(f"Tópico {topic[0]}: {topic[1]}")
+#     # # Modelagem de Tópicos
+#     # st.write("#### Modelagem de Tópicos")
+#     # topics = topicModeling(top_posts, num_topics=3, passes=5)
+#     # for topic in topics:
+#     #     st.write(f"Tópico {topic[0]}: {topic[1]}")
     
-    # Horário de Postagem
-    st.write("#### Horário de Postagem")
-    top_posts['data_hora'] = pd.to_datetime(top_posts['data_hora'])
-    post_hours = top_posts['data_hora'].dt.hour.value_counts().sort_index()
-    st.line_chart(post_hours)
+#     # # Horário de Postagem
+#     # st.write("#### Horário de Postagem")
+#     # top_posts['data_hora'] = pd.to_datetime(top_posts['data_hora'])
+#     # post_hours = top_posts['data_hora'].dt.hour.value_counts().sort_index()
+#     # st.line_chart(post_hours)

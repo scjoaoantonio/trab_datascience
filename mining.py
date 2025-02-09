@@ -19,10 +19,27 @@ st.title("Análise de Sentimentos e Modelagem de Tópicos")
 
 def analyzeSentiment(df):
     sia = SentimentIntensityAnalyzer()
+
+    # Preenchendo valores None para evitar erros na análise
+    df['texto_limpo'] = df['texto_limpo'].fillna('')
+
+    # Aplicando a análise de sentimentos
     sentiments = df['texto_limpo'].apply(lambda text: sia.polarity_scores(text) if isinstance(text, str) else {"neg": 0, "neu": 0, "pos": 0, "compound": 0})
-    sentiment_df = pd.DataFrame(list(sentiments))
-    df = pd.concat([df, sentiment_df], axis=1)
     
+    # Convertendo a lista de dicionários para DataFrame
+    sentiment_df = pd.DataFrame(sentiments.tolist())
+
+    # Resetando o índice antes de concatenar
+    df = df.reset_index(drop=True)
+    sentiment_df = sentiment_df.reset_index(drop=True)
+
+    # Concatenando os resultados ao DataFrame original
+    df = pd.concat([df, sentiment_df], axis=1)
+
+    # Removendo possíveis linhas vazias
+    df = df.dropna(subset=['texto_limpo'])
+
+    # Plotando a distribuição dos sentimentos
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.histplot(df['compound'], bins=20, kde=True, color='blue', ax=ax)
     ax.set_title("Distribuição dos Sentimentos (VADER)", fontsize=14)
@@ -30,19 +47,21 @@ def analyzeSentiment(df):
     ax.set_ylabel("Frequência")
     ax.grid(axis='y', linestyle='--', alpha=0.7)
     st.pyplot(fig)
-    
+
+    # Exibindo os posts mais positivos e negativos
     top_positive = df.nlargest(3, 'compound')
     top_negative = df.nsmallest(3, 'compound')
-    
+
     st.write("### Posts mais positivos")
     for _, row in top_positive.iterrows():
         st.write(f"- {row['texto_limpo']} (Score: {row['compound']})")
-    
+
     st.write("### Posts mais negativos")
     for _, row in top_negative.iterrows():
         st.write(f"- {row['texto_limpo']} (Score: {row['compound']})")
-    
+
     return df
+
 
 def topicModeling(df, num_topics=5, passes=10):
     if isinstance(df['tokens'].iloc[0], str):

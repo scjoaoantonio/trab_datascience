@@ -76,7 +76,7 @@ def usersPage():
                 patterns.analyze_post_features(df)
                 
                 # Identificação de padrões nos posts de maior engajamento
-                patterns.identify_patterns(top_posts)
+                # patterns.identify_patterns(top_posts)
 
                 # Evolução temporal de engajamento
                 # st.write("### Evolução Temporal de Engajamento")
@@ -87,6 +87,10 @@ def usersPage():
                 # Previsão de engajamento utilizando ARIMA
                 st.write("### Previsão de Engajamento para os Próximos Dias")
                 arima.train_arima(df, forecast_days)
+                # Treinar modelo e sugerir post ideal
+                melhor_hora, melhor_dia, melhor_tamanho = arima.analyze_best_post(df)                
+                st.write("### Postagem Ideal Sugerida")
+                st.write(f"Poste no dia {melhor_dia} às {melhor_hora}h com aproximadamente {melhor_tamanho} caracteres para obter maior engajamento.")
 
                 # Análise de sentimentos e modelagem de tópicos
                 mining.analyzeSentiment(df)
