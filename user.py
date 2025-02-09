@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 # Imports de funções customizadas
 import blueskyApi as bsky
@@ -9,6 +7,7 @@ import mining as mining
 import arima_model as arima
 import graph_utils as graph
 import patterns as patterns
+import mining as mining
 
 
 # ----------------------------
@@ -88,6 +87,10 @@ def usersPage():
                 # Previsão de engajamento utilizando ARIMA
                 st.write("### Previsão de Engajamento para os Próximos Dias")
                 arima.train_arima(df, forecast_days)
+
+                # Análise de sentimentos e modelagem de tópicos
+                mining.analyzeSentiment(df)
+                mining.topicModeling(df)
 
             else:
                 st.error("Nenhum dado encontrado para o usuário informado.")
