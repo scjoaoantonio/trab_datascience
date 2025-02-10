@@ -15,12 +15,16 @@ streamlit-option-menu
 # Pacotes de NLP e Machine Learning (ajustados para evitar problemas no deploy)
 nltk
 gensim==4.3.3
-spacy
 wordcloud
 huggingface-hub
 transformers
 pyLDAvis
 vaderSentiment
+spacy
+
+# Modelos do spaCy para português e inglês
+pt_core_news_sm @ https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.6.0/pt_core_news_sm-3.6.0.tar.gz
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz
 
 # Dependências web e API
 requests
@@ -39,3 +43,4 @@ protobuf
 pydantic
 python-dotenv
 PyYAML
+

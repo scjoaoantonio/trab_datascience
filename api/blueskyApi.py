@@ -4,17 +4,26 @@ import streamlit as st
 from pathlib import Path
 
 import spacy
+import subprocess
 
-# Carregar modelos do spaCy
-nlp_pt = spacy.load("pt_core_news_sm")
-nlp_en = spacy.load("en_core_web_sm")
+import spacy
+import subprocess
+
+# Função para carregar modelo spaCy e instalar caso não esteja disponível
+def load_spacy_model(lang):
+    try:
+        return spacy.load(lang)
+    except OSError:
+        subprocess.run(["python", "-m", "spacy", "download", lang])
+        return spacy.load(lang)
+
+# Carregar modelos com verificação
+nlp_pt = load_spacy_model("pt_core_news_sm")
+nlp_en = load_spacy_model("en_core_web_sm")
 
 def cleanText(text, language):
     """Limpa e tokeniza um texto usando spaCy e remove stopwords."""
-    # Escolher o modelo de linguagem correto
     nlp = nlp_pt if language == "portuguese" else nlp_en
-
-    # Processar o texto
     doc = nlp(text)
 
     # Remover stopwords e pontuação
