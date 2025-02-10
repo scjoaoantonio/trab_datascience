@@ -12,7 +12,8 @@ import networkx as nx
 
 # Baixar stopwords
 nltk.download('stopwords')
-nltk.download('punkt')
+nltk.data.path.append("./nltk_data")
+# nltk.download('punkt')
 
 # Função para limpar texto
 def cleanText(text, language):

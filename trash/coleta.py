@@ -9,7 +9,8 @@ from wordcloud import WordCloud
 import requests
 
 # Stopwords
-nltk.download('punkt')
+# nltk.download('punkt')
+nltk.data.path.append("./nltk_data")
 nltk.download('stopwords')
 
 def getUserFeed(actor, limit, cursor=None):
