@@ -2,7 +2,7 @@
 streamlit
 pandas
 numpy
-scipy
+scipy==1.10.1
 scikit-learn
 matplotlib
 seaborn
@@ -12,7 +12,7 @@ altair
 
 # Pacotes de NLP e Machine Learning (ajustados para evitar problemas no deploy)
 nltk
-gensim
+gensim==4.3.0
 spacy
 wordcloud
 huggingface-hub
