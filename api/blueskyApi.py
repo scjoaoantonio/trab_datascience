@@ -1,31 +1,57 @@
 import requests
-import re
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 import pandas as pd
 import streamlit as st
 
-# nltk.download('punkt')
-nltk.download('stopwords')
-nltk.data.path.append("./nltk_data")
+import os
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
-def cleanText(text, language):
+# # nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.data.path.append("./nltk_data")
+
+# def cleanText(text, language):
+#     text = text.lower()
+#     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
+#     text = re.sub(r'[^\w\s]', '', text)
+#     text = re.sub(r'\d+', '', text)
+    
+#     tokens = word_tokenize(text, language=language)
+    
+#     # Definir as stop words com base no idioma
+#     if language == 'portuguese':
+#         stop_words = set(stopwords.words('portuguese'))
+#     else:  # Assume que o idioma é inglês
+#         stop_words = set(stopwords.words('english'))
+
+#     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
+#     return tokens_sem_stopwords
+
+# Adicionar o caminho correto para os dados do nltk
+nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
+nltk.data.path.append(nltk_data_path)
+
+# Garantir que os arquivos estão acessíveis
+print(f"Caminhos do NLTK: {nltk.data.path}")
+
+# Função para limpar o texto e tokenizar
+def cleanText(text):
     text = text.lower()
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     text = re.sub(r'[^\w\s]', '', text)
     text = re.sub(r'\d+', '', text)
     
-    tokens = word_tokenize(text, language=language)
+    # Tokenizar o texto
+    tokens = word_tokenize(text)  # Remova "language='portuguese'" pois o nltk pode não reconhecer
     
-    # Definir as stop words com base no idioma
-    if language == 'portuguese':
-        stop_words = set(stopwords.words('portuguese'))
-    else:  # Assume que o idioma é inglês
-        stop_words = set(stopwords.words('english'))
-
+    # Remover stopwords
+    stop_words = set(stopwords.words('portuguese'))
     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
+    
     return tokens_sem_stopwords
+
 
 def getUserFeedPlus(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
