@@ -2,16 +2,23 @@ import requests
 import pandas as pd
 import streamlit as st
 import spacy
+from pathlib import Path
 
-# Carregar modelo para português e inglês
-nlp_pt = spacy.load("pt_core_news_sm")
-nlp_en = spacy.load("en_core_web_sm")
+# Verificar e carregar modelos do spaCy
+def load_spacy_model(model_name, local_path):
+    """Carrega um modelo spaCy do diretório local se disponível"""
+    if Path(local_path).exists():
+        return spacy.load(local_path)
+    else:
+        return spacy.load(model_name)
+
+# Caminho alternativo se não puder baixar modelos
+nlp_pt = load_spacy_model("pt_core_news_sm", "./models/pt_core_news_sm")
+nlp_en = load_spacy_model("en_core_web_sm", "./models/en_core_web_sm")
 
 def cleanText(text, language):
-    # Escolher o modelo correto
+    """Limpa e tokeniza um texto usando spaCy"""
     nlp = nlp_pt if language == "portuguese" else nlp_en
-    
-    # Processar o texto
     doc = nlp(text.lower())
     
     # Remover stopwords e pontuação
