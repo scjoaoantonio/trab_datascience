@@ -10,6 +10,7 @@ plotly
 statsmodels
 altair
 networkx
+streamlit-option-menu
 
 # Pacotes de NLP e Machine Learning (ajustados para evitar problemas no deploy)
 nltk
