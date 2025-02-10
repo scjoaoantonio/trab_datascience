@@ -4,42 +4,21 @@ import streamlit as st
 from pathlib import Path
 
 import spacy
-from pathlib import Path
 
-def load_stopwords(file_path):
-    """Carrega stopwords de um arquivo de texto"""
-    stopwords = set()
-    path = Path(file_path)
-    if path.exists():
-        with open(path, "r", encoding="utf-8") as f:
-            stopwords = set(word.strip() for word in f.readlines())
-    return stopwords
-
-# Carregar stopwords dos arquivos
-stopwords_pt = load_stopwords("./stopwords_pt.txt")
-stopwords_en = load_stopwords("./stopwords_en.txt")
-
-# Verificar e carregar modelos do spaCy
-def load_spacy_model(model_name, local_path):
-    """Carrega um modelo spaCy do diretório local se disponível"""
-    if Path(local_path).exists():
-        return spacy.load(local_path)
-    else:
-        return spacy.load(model_name)
-
-# Carregar modelos spaCy
-nlp_pt = load_spacy_model("pt_core_news_sm", "./models/pt_core_news_sm")
-nlp_en = load_spacy_model("en_core_web_sm", "./models/en_core_web_sm")
+# Carregar modelos do spaCy
+nlp_pt = spacy.load("pt_core_news_sm")
+nlp_en = spacy.load("en_core_web_sm")
 
 def cleanText(text, language):
-    """Limpa e tokeniza um texto usando spaCy e remove stopwords"""
+    """Limpa e tokeniza um texto usando spaCy e remove stopwords."""
+    # Escolher o modelo de linguagem correto
     nlp = nlp_pt if language == "portuguese" else nlp_en
-    stopwords = stopwords_pt if language == "portuguese" else stopwords_en
-    
-    doc = nlp(text.lower())  # Tokenização com spaCy
-    
+
+    # Processar o texto
+    doc = nlp(text)
+
     # Remover stopwords e pontuação
-    tokens = [token.text for token in doc if token.text not in stopwords and not token.is_punct]
+    tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
     
     return tokens
 
