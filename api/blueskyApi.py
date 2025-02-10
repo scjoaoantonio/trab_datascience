@@ -29,11 +29,10 @@ from nltk.corpus import stopwords
 #     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
 #     return tokens_sem_stopwords
 
-# Adicionar o caminho correto para os dados do nltk
+# Configurar caminho do nltk_data
 nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
 nltk.data.path.append(nltk_data_path)
 
-# Garantir que os arquivos estão acessíveis
 print(f"Caminhos do NLTK: {nltk.data.path}")
 
 def cleanText(text, language):
@@ -42,15 +41,19 @@ def cleanText(text, language):
     text = re.sub(r'[^\w\s]', '', text)
     text = re.sub(r'\d+', '', text)
 
-    # Tokenizar usando apenas o texto, sem especificar idioma
+    # Tokenizar sem passar language (pois não é suportado)
     tokens = word_tokenize(text)
 
-    # Remover stopwords
-    stop_words = set(stopwords.words(language)) if language in ['portuguese', 'english'] else set()
+    # Configurar stopwords corretamente
+    if language == 'portuguese':
+        stop_words = set(stopwords.words('portuguese'))
+    elif language == 'english':
+        stop_words = set(stopwords.words('english'))
+    else:
+        stop_words = set()
 
     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
     return tokens_sem_stopwords
-
 def getUserFeedPlus(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
     params = {"actor": actor, "limit": limit}
