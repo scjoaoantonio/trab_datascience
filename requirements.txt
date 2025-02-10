@@ -1,0 +1,15 @@
+re
+nltk
+numpy
+gensim
+pandas
+Pillow
+seaborn
+networkx
+requests
+pyLDAvis
+wordcloud
+streamlit
+matplotlib
+statsmodels
+vaderSentiment
