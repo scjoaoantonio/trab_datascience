@@ -1,8 +1,6 @@
 import api.blueskyApi as blueskyApi
 import re
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+
 import pandas as pd
 import streamlit as st
 import seaborn as sns
@@ -10,28 +8,23 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import networkx as nx
 
-# Baixar stopwords
-nltk.download('stopwords')
-nltk.data.path.append("./nltk_data")
-# nltk.download('punkt')
+import spacy
 
-# Função para limpar texto
+# Carregar modelo para português e inglês
+nlp_pt = spacy.load("pt_core_news_sm")
+nlp_en = spacy.load("en_core_web_sm")
+
 def cleanText(text, language):
-    text = text.lower()
-    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
-    text = re.sub(r'[^\w\s]', '', text)
-    text = re.sub(r'\d+', '', text)
+    # Escolher o modelo correto
+    nlp = nlp_pt if language == "portuguese" else nlp_en
     
-    tokens = word_tokenize(text, language=language)
+    # Processar o texto
+    doc = nlp(text.lower())
     
-    # Definir as stop words com base no idioma
-    if language == 'portuguese':
-        stop_words = set(stopwords.words('portuguese'))
-    else:  # Assume que o idioma é inglês
-        stop_words = set(stopwords.words('english'))
+    # Remover stopwords e pontuação
+    tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
+    return tokens
 
-    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
-    return tokens_sem_stopwords
 
 # Função para coletar posts
 def collectPosts(actor, limit, iterations, language):

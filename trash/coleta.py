@@ -1,17 +1,5 @@
 import pandas as pd
-import nltk
-import re
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-import matplotlib.pyplot as plt
-import seaborn as sns
-from wordcloud import WordCloud
 import requests
-
-# Stopwords
-# nltk.download('punkt')
-nltk.data.path.append("./nltk_data")
-nltk.download('stopwords')
 
 def getUserFeed(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
@@ -30,15 +18,22 @@ def getUserFeed(actor, limit, cursor=None):
         return None
 
 
-def cleanText(text):
-    text = text.lower()
-    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
-    text = re.sub(r'[^\w\s]', '', text)
-    text = re.sub(r'\d+', '', text)
-    tokens = word_tokenize(text, language='portuguese')
-    stop_words = set(stopwords.words('portuguese'))
-    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
-    return tokens_sem_stopwords
+import spacy
+
+# Carregar modelo para português e inglês
+nlp_pt = spacy.load("pt_core_news_sm")
+nlp_en = spacy.load("en_core_web_sm")
+
+def cleanText(text, language):
+    # Escolher o modelo correto
+    nlp = nlp_pt if language == "portuguese" else nlp_en
+    
+    # Processar o texto
+    doc = nlp(text.lower())
+    
+    # Remover stopwords e pontuação
+    tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
+    return tokens
 
 def collectPosts(actor, limit, iterations):
     all_posts = []

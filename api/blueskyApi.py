@@ -1,12 +1,27 @@
 import requests
 import pandas as pd
 import streamlit as st
+import spacy
 
-import os
-import re
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+# Carregar modelo para português e inglês
+nlp_pt = spacy.load("pt_core_news_sm")
+nlp_en = spacy.load("en_core_web_sm")
+
+def cleanText(text, language):
+    # Escolher o modelo correto
+    nlp = nlp_pt if language == "portuguese" else nlp_en
+    
+    # Processar o texto
+    doc = nlp(text.lower())
+    
+    # Remover stopwords e pontuação
+    tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
+    return tokens
+
+
+# import nltk
+# from nltk.tokenize import word_tokenize
+# from nltk.corpus import stopwords
 
 # # nltk.download('punkt')
 # nltk.download('stopwords')
@@ -29,31 +44,6 @@ from nltk.corpus import stopwords
 #     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
 #     return tokens_sem_stopwords
 
-# Configurar caminho do nltk_data
-nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
-nltk.data.path.append(nltk_data_path)
-
-print(f"Caminhos do NLTK: {nltk.data.path}")
-
-def cleanText(text, language):
-    text = text.lower()
-    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
-    text = re.sub(r'[^\w\s]', '', text)
-    text = re.sub(r'\d+', '', text)
-
-    # Tokenizar sem passar language (pois não é suportado)
-    tokens = word_tokenize(text)
-
-    # Configurar stopwords corretamente
-    if language == 'portuguese':
-        stop_words = set(stopwords.words('portuguese'))
-    elif language == 'english':
-        stop_words = set(stopwords.words('english'))
-    else:
-        stop_words = set()
-
-    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
-    return tokens_sem_stopwords
 def getUserFeedPlus(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
     params = {"actor": actor, "limit": limit}
