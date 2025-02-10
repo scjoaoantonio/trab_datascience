@@ -37,7 +37,7 @@ nltk.data.path.append(nltk_data_path)
 print(f"Caminhos do NLTK: {nltk.data.path}")
 
 # Função para limpar o texto e tokenizar
-def cleanText(text):
+def cleanText(text,language):
     text = text.lower()
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     text = re.sub(r'[^\w\s]', '', text)
@@ -47,9 +47,12 @@ def cleanText(text):
     tokens = word_tokenize(text)  # Remova "language='portuguese'" pois o nltk pode não reconhecer
     
     # Remover stopwords
-    stop_words = set(stopwords.words('portuguese'))
-    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
-    
+    if language == 'portuguese':
+      stop_words = set(stopwords.words('portuguese'))
+    else:  # Assume que o idioma é inglês
+      stop_words = set(stopwords.words('english'))
+
+    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]    
     return tokens_sem_stopwords
 
 
