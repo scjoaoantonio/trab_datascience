@@ -9,6 +9,7 @@ seaborn
 plotly
 statsmodels
 altair
+networkx
 
 # Pacotes de NLP e Machine Learning (ajustados para evitar problemas no deploy)
 nltk
@@ -18,6 +19,7 @@ wordcloud
 huggingface-hub
 transformers
 pyLDAvis
+vaderSentiment
 
 # Dependências web e API
 requests
@@ -27,7 +29,6 @@ lxml
 flask
 flask-cors
 flask-login
-vaderSentiment
 
 # Dependências extras
 joblib
