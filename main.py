@@ -1,15 +1,11 @@
 import streamlit as st
 
-# Importar as funções para as páginas
-from user import usersPage
-from topic import topicPage
-from network import networkPage
-from _app import mainPage
+from sections import mainPage, usersPage, topicPage, networkPage
 from streamlit_option_menu import option_menu
 
 st.markdown(
     """
-    <style>
+    <style> 
     /* Estilizar a barra lateral */
     [data-testid="stSidebar"] {
         background-color: #131722 !important;

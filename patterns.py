@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 
 # Imports de funções customizadas
 import mining as mining
-import graph_utils as graph
-
 
 # ----------------------------
 # Funções de Pré-processamento e Visualização
