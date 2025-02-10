@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 import pandas as pd
 import streamlit as st
 
+nltk.download('punkt')
 nltk.download('stopwords')
 
 def cleanText(text, language):

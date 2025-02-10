@@ -13,6 +13,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from collections import defaultdict
 
 # Baixar recursos necessários do NLTK
+nltk.download('punkt')
 nltk.download('vader_lexicon')
 
 # Configuração do Streamlit
