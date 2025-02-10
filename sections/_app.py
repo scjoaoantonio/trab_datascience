@@ -67,7 +67,7 @@ def mainPage():
     # ----------------------------
     st.header("🌍 Palavras Mais Frequentes")
     st.write("As palavras mais recorrentes nos posts analisados.")
-    st.image(image_wordcloud, caption="WordCloud das Palavras Mais Frequentes", use_column_width=True)
+    st.image(image_wordcloud, caption="WordCloud das Palavras Mais Frequentes", use_container_width=True)
 
     # ----------------------------
     # 📊 Análise de Engajamento (Likes, Comentários, Compartilhamentos, Repostagens)
@@ -128,15 +128,15 @@ def mainPage():
 
     cols = st.columns(2)
     with cols[0]:
-        st.image(image_likes, caption="Distribuição de Likes", use_column_width=True)
+        st.image(image_likes, caption="Distribuição de Likes", use_container_width=True)
     with cols[1]:
-        st.image(image_comentarios, caption="Distribuição de Comentários", use_column_width=True)
+        st.image(image_comentarios, caption="Distribuição de Comentários", use_container_width=True)
 
     cols = st.columns(2)
     with cols[0]:
-        st.image(image_compartilhamentos, caption="Distribuição de Compartilhamentos", use_column_width=True)
+        st.image(image_compartilhamentos, caption="Distribuição de Compartilhamentos", use_container_width=True)
     with cols[1]:
-        st.image(image_repostagem, caption="Distribuição de Repostagens", use_column_width=True)
+        st.image(image_repostagem, caption="Distribuição de Repostagens", use_container_width=True)
 
     # ----------------------------
     # 🔥 Correlação entre Métricas
@@ -144,7 +144,7 @@ def mainPage():
 
     st.header("🔥 Correlação Entre Métricas de Engajamento")
     st.write("Mapa de calor mostrando a correlação entre diferentes métricas de engajamento.")
-    st.image(image_correlacao, caption="Mapa de Correlação", use_column_width=True)
+    st.image(image_correlacao, caption="Mapa de Correlação", use_container_width=True)
 
     # ----------------------------
     # 📅 Análise Temporal do Engajamento
@@ -154,15 +154,15 @@ def mainPage():
 
     cols = st.columns(2)
     with cols[0]:
-        st.image(image_engChar, caption="Engajamento vs. Número de Caracteres", use_column_width=True)
+        st.image(image_engChar, caption="Engajamento vs. Número de Caracteres", use_container_width=True)
     with cols[1]:
-        st.image(image_engHora, caption="Engajamento Médio por Hora do Dia", use_column_width=True)
+        st.image(image_engHora, caption="Engajamento Médio por Hora do Dia", use_container_width=True)
 
     cols = st.columns(2)
     with cols[0]:
-        st.image(image_engTempo, caption="Tendência do Engajamento ao Longo do Tempo", use_column_width=True)
+        st.image(image_engTempo, caption="Tendência do Engajamento ao Longo do Tempo", use_container_width=True)
     with cols[1]:
-        st.image(image_engPrevisao, caption="Previsão do Engajamento Futuro", use_column_width=True)
+        st.image(image_engPrevisao, caption="Previsão do Engajamento Futuro", use_container_width=True)
 
     # ----------------------------
     # 🌟 Posts com Maior Engajamento
@@ -188,14 +188,14 @@ def mainPage():
     # ----------------------------
     st.header("🌍 Palavras Frequentes em Posts Mais Engajados")
     st.write("Quais palavras aparecem com mais frequência em posts que tiveram alto engajamento?")
-    st.image(image_engWordcloud, caption="WordCloud de Postagens com Maior Engajamento", use_column_width=True)
+    st.image(image_engWordcloud, caption="WordCloud de Postagens com Maior Engajamento", use_container_width=True)
 
     # ----------------------------
     # 💬 Análise de Sentimentos
     # ----------------------------
     st.header("💬 Análise de Sentimentos")
     st.write("Distribuição dos sentimentos dos posts usando o modelo VADER.")
-    st.image(image_vader, caption="Distribuição dos Sentimentos", use_column_width=True)
+    st.image(image_vader, caption="Distribuição dos Sentimentos", use_container_width=True)
 
 
     # Postagens mais positivas
@@ -285,6 +285,6 @@ def mainPage():
     }
 
     # Adicionando a imagem da modelagem de tópicos
-    st.image(image_modelagem, caption="Visualização da Modelagem de Tópicos", use_column_width=True)
+    st.image(image_modelagem, caption="Visualização da Modelagem de Tópicos", use_container_width=True)
     # Exibindo os tópicos em formato de tabela
     st.write(pd.DataFrame(tópicos).set_index("Tópico"))
