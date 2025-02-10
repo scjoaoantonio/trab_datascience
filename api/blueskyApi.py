@@ -36,25 +36,20 @@ nltk.data.path.append(nltk_data_path)
 # Garantir que os arquivos estão acessíveis
 print(f"Caminhos do NLTK: {nltk.data.path}")
 
-# Função para limpar o texto e tokenizar
-def cleanText(text,language):
+def cleanText(text, language):
     text = text.lower()
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     text = re.sub(r'[^\w\s]', '', text)
     text = re.sub(r'\d+', '', text)
-    
-    # Tokenizar o texto
-    tokens = word_tokenize(text)  # Remova "language='portuguese'" pois o nltk pode não reconhecer
-    
+
+    # Tokenizar usando apenas o texto, sem especificar idioma
+    tokens = word_tokenize(text)
+
     # Remover stopwords
-    if language == 'portuguese':
-      stop_words = set(stopwords.words('portuguese'))
-    else:  # Assume que o idioma é inglês
-      stop_words = set(stopwords.words('english'))
+    stop_words = set(stopwords.words(language)) if language in ['portuguese', 'english'] else set()
 
-    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]    
+    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
     return tokens_sem_stopwords
-
 
 def getUserFeedPlus(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
