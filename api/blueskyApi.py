@@ -1,8 +1,23 @@
 import requests
 import pandas as pd
 import streamlit as st
+from pathlib import Path
+
 import spacy
 from pathlib import Path
+
+def load_stopwords(file_path):
+    """Carrega stopwords de um arquivo de texto"""
+    stopwords = set()
+    path = Path(file_path)
+    if path.exists():
+        with open(path, "r", encoding="utf-8") as f:
+            stopwords = set(word.strip() for word in f.readlines())
+    return stopwords
+
+# Carregar stopwords dos arquivos
+stopwords_pt = load_stopwords("./stopwords_pt.txt")
+stopwords_en = load_stopwords("./stopwords_en.txt")
 
 # Verificar e carregar modelos do spaCy
 def load_spacy_model(model_name, local_path):
@@ -12,19 +27,21 @@ def load_spacy_model(model_name, local_path):
     else:
         return spacy.load(model_name)
 
-# Caminho alternativo se não puder baixar modelos
+# Carregar modelos spaCy
 nlp_pt = load_spacy_model("pt_core_news_sm", "./models/pt_core_news_sm")
 nlp_en = load_spacy_model("en_core_web_sm", "./models/en_core_web_sm")
 
 def cleanText(text, language):
-    """Limpa e tokeniza um texto usando spaCy"""
+    """Limpa e tokeniza um texto usando spaCy e remove stopwords"""
     nlp = nlp_pt if language == "portuguese" else nlp_en
-    doc = nlp(text.lower())
+    stopwords = stopwords_pt if language == "portuguese" else stopwords_en
+    
+    doc = nlp(text.lower())  # Tokenização com spaCy
     
     # Remover stopwords e pontuação
-    tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
+    tokens = [token.text for token in doc if token.text not in stopwords and not token.is_punct]
+    
     return tokens
-
 
 # import nltk
 # from nltk.tokenize import word_tokenize
