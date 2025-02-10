@@ -27,6 +27,7 @@ lxml
 flask
 flask-cors
 flask-login
+vaderSentiment
 
 # Dependências extras
 joblib
