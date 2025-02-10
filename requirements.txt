@@ -17,6 +17,7 @@ spacy
 wordcloud
 huggingface-hub
 transformers
+pyLDAvis
 
 # Dependências web e API
 requests
