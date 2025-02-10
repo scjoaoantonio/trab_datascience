@@ -1,60 +1,29 @@
 import requests
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 import pandas as pd
 import streamlit as st
-from pathlib import Path
 
-import spacy
-import subprocess
-
-import spacy
-import subprocess
-
-# Função para carregar modelo spaCy e instalar caso não esteja disponível
-def load_spacy_model(lang):
-    try:
-        return spacy.load(lang)
-    except OSError:
-        subprocess.run(["python", "-m", "spacy", "download", lang])
-        return spacy.load(lang)
-
-# Carregar modelos com verificação
-nlp_pt = load_spacy_model("pt_core_news_sm")
-nlp_en = load_spacy_model("en_core_web_sm")
+nltk.download('stopwords')
 
 def cleanText(text, language):
-    """Limpa e tokeniza um texto usando spaCy e remove stopwords."""
-    nlp = nlp_pt if language == "portuguese" else nlp_en
-    doc = nlp(text)
-
-    # Remover stopwords e pontuação
-    tokens = [token.text for token in doc if not token.is_stop and not token.is_punct]
+    text = text.lower()
+    text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'[^\w\s]', '', text)
+    text = re.sub(r'\d+', '', text)
     
-    return tokens
-
-# import nltk
-# from nltk.tokenize import word_tokenize
-# from nltk.corpus import stopwords
-
-# # nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.data.path.append("./nltk_data")
-
-# def cleanText(text, language):
-#     text = text.lower()
-#     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
-#     text = re.sub(r'[^\w\s]', '', text)
-#     text = re.sub(r'\d+', '', text)
+    tokens = word_tokenize(text, language=language)
     
-#     tokens = word_tokenize(text, language=language)
-    
-#     # Definir as stop words com base no idioma
-#     if language == 'portuguese':
-#         stop_words = set(stopwords.words('portuguese'))
-#     else:  # Assume que o idioma é inglês
-#         stop_words = set(stopwords.words('english'))
+    # Definir as stop words com base no idioma
+    if language == 'portuguese':
+        stop_words = set(stopwords.words('portuguese'))
+    else:  # Assume que o idioma é inglês
+        stop_words = set(stopwords.words('english'))
 
-#     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
-#     return tokens_sem_stopwords
+    tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
+    return tokens_sem_stopwords
 
 def getUserFeedPlus(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
