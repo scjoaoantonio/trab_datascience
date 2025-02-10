@@ -1,0 +1,6 @@
+# Pacotes do sistema essenciais para spaCy e visualização
+libffi-dev          # Necessário para algumas operações de C, especialmente em pacotes como spacy
+libglib2.0-0       # Dependência gráfica para algumas bibliotecas de visualização
+libsm6              # Necessário para operações de gráficos
+libxext6           # Dependência de sistema para gráficos
+libxrender-dev      # Dependência de sistema para renderização gráfica
