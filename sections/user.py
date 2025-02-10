@@ -5,7 +5,7 @@ import pandas as pd
 import blueskyApi as bsky
 import mining as mining
 import utils.arima_model as arima
-import graph_utils as graph
+import utils.graph_utils as graph
 import patterns as patterns
 import mining as mining
 
