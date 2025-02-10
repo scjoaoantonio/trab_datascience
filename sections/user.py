@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Imports de funções customizadas
-import blueskyApi as bsky
+import api as bsky
 import utils.mining as mining
 import utils.arima_model as arima
 import utils.graph_utils as graph

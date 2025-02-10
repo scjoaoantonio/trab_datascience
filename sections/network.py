@@ -1,4 +1,4 @@
-import blueskyApi
+import api.blueskyApi as blueskyApi
 import re
 import nltk
 from nltk.corpus import stopwords
