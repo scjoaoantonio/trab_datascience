@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Imports de funções customizadas
-import mining as mining
+import utils.mining as mining
 
 # ----------------------------
 # Funções de Pré-processamento e Visualização

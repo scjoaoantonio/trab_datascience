@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from blueskyApi import search_posts, cleanText
 from utils.graph_utils import distribution_values, analyze_correlation, generate_wordcloud
-from mining import analyzeSentiment, topicModeling
+from utils.mining import analyzeSentiment, topicModeling
 
 def get_top_tokens(df):
     token_engagement = {}

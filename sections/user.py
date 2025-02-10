@@ -3,11 +3,11 @@ import pandas as pd
 
 # Imports de funções customizadas
 import blueskyApi as bsky
-import mining as mining
+import utils.mining as mining
 import utils.arima_model as arima
 import utils.graph_utils as graph
 import utils.patterns as patterns
-import mining as mining
+import utils.mining as mining
 
 
 # ----------------------------
