@@ -6,9 +6,16 @@ from nltk.tokenize import word_tokenize
 import pandas as pd
 import streamlit as st
 
+import os
 import nltk
-nltk.download('stopwords')
-nltk.download('punkt')  
+
+nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
+if not os.path.exists(nltk_data_dir):
+    os.mkdir(nltk_data_dir)
+
+nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
+nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
+nltk.data.path.append(nltk_data_dir)  
 
 def cleanText(text, language):
     text = text.lower()
