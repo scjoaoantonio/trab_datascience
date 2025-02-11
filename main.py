@@ -1,6 +1,10 @@
 import streamlit as st
 
-from sections import mainPage, usersPage, topicPage, networkPage
+from sections.user import usersPage
+from sections.topic import topicPage
+from sections.network import networkPage
+from sections._app import mainPage
+
 from streamlit_option_menu import option_menu
 
 st.markdown(
