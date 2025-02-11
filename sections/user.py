@@ -9,7 +9,6 @@ import utils.graph_utils as graph
 import utils.patterns as patterns
 import utils.mining as mining
 
-
 # ----------------------------
 # Função Principal da Página de Usuários
 # ----------------------------
@@ -53,11 +52,6 @@ def usersPage():
                 st.write("### Correlação Entre os Atributos")
                 graph.analyze_correlation(df)
                 
-                # # Exibe os tokens com maior engajamento
-                # st.write("### Tokens com Mais Engajamento")
-                # top_tokens = get_top_tokens(df)
-                # st.dataframe(top_tokens)
-                
                 # Exibe os posts com maior engajamento
                 st.write("### Posts com Maior Engajamento")
                 top_posts = df.sort_values(by='total', ascending=False).head(5)
@@ -76,11 +70,6 @@ def usersPage():
                 # Análise das características dos posts
                 patterns.analyze_post_features(df)
                 
-                # Identificação de padrões nos posts de maior engajamento
-                # patterns.identify_patterns(top_posts)
-
-                # Evolução temporal de engajamento
-                # st.write("### Evolução Temporal de Engajamento")
                 df['data_hora'] = pd.to_datetime(df['data_hora'])
                 temporal_data = df.groupby(df['data_hora'].dt.date)['total'].sum()
                 # st.line_chart(temporal_data)     
@@ -96,7 +85,6 @@ def usersPage():
                 # Análise de sentimentos e modelagem de tópicos
                 mining.analyzeSentiment(df)
                 mining.topicModeling(df)
-                mining.display_sentiment_by_state(df)
                 state_sentiments = mining.analyze_engagement_and_sentiment(df)
                 mining.display_sentiment_map(state_sentiments)
 
