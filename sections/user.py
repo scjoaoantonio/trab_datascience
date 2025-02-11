@@ -27,6 +27,7 @@ def usersPage():
     
     if st.button("Analisar", key="analyze_button"):
         if actor:
+            bsky.nltkDownload()
             st.write("Coletando dados...")
             # Coleta os posts do usuário (certifique-se de que collectPosts esteja implementada)
             posts = bsky.collectPosts(actor, limit, iterations, language_code)

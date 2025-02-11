@@ -9,13 +9,27 @@ import streamlit as st
 import os
 import nltk
 
-nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
-if not os.path.exists(nltk_data_dir):
-    os.mkdir(nltk_data_dir)
+import os
+import re
+import requests
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import pandas as pd
+import streamlit as st
 
-nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
-nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
-nltk.data.path.append(nltk_data_dir)  
+def nltkDownload():
+  # Criar diretório customizado para dados do NLTK
+  nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
+  if not os.path.exists(nltk_data_dir):
+      os.mkdir(nltk_data_dir)
+
+  # Baixar os recursos necessários apenas uma vez
+  nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
+  nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
+
+  # Adicionar diretório ao caminho do NLTK
+  nltk.data.path.append(nltk_data_dir)
 
 def cleanText(text, language):
     text = text.lower()
