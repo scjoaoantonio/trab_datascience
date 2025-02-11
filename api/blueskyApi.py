@@ -19,34 +19,31 @@ import pandas as pd
 import streamlit as st
 
 def nltkDownload():
-  # Criar diretório customizado para dados do NLTK
-  nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
-  if not os.path.exists(nltk_data_dir):
-      os.mkdir(nltk_data_dir)
-
-  # Baixar os recursos necessários apenas uma vez
-  nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
-  nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
-
-  # Adicionar diretório ao caminho do NLTK
-  nltk.data.path.append(nltk_data_dir)
+  # Configurar o caminho para os dados do NLTK
+  nltk_data_path = os.path.join(os.path.dirname(__file__), 'nltk_data')
+  nltk.data.path.append(nltk_data_path)
 
 def cleanText(text, language):
     text = text.lower()
     text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
     text = re.sub(r'[^\w\s]', '', text)
     text = re.sub(r'\d+', '', text)
-    
-    tokens = word_tokenize(text, language=language)
-    
-    # Definir as stop words com base no idioma
-    if language == 'portuguese':
-        stop_words = set(stopwords.words('portuguese'))
-    else:  # Assume que o idioma é inglês
-        stop_words = set(stopwords.words('english'))
 
+    # Ajustar idioma para compatibilidade com o NLTK
+    language_map = {"pt": "portuguese", "en": "english"}
+    language = language_map.get(language, language)
+
+    try:
+        tokens = nltk.word_tokenize(text, language=language)
+    except LookupError:
+        print(f"Erro: Não foi possível encontrar os recursos de tokenização para '{language}'.")
+        tokens = text.split()  # Fallback simples
+
+    stop_words = set(nltk.corpus.stopwords.words(language if language in nltk.corpus.stopwords.fileids() else 'english'))
     tokens_sem_stopwords = [word for word in tokens if word not in stop_words]
     return tokens_sem_stopwords
+
+
 
 def getUserFeedPlus(actor, limit, cursor=None):
     url = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
