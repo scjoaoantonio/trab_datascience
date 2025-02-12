@@ -3,7 +3,7 @@ import streamlit as st
 from sections.user import usersPage
 from sections.topic import topicPage
 from sections.network import networkPage
-from sections._app import mainPage
+from sections.home import mainPage
 
 from streamlit_option_menu import option_menu
 
