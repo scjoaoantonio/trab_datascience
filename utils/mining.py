@@ -2,7 +2,6 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import pyLDAvis.gensim_models as gensimvis
 from nltk.sentiment import SentimentIntensityAnalyzer
 from gensim import corpora
 from gensim.models import LdaModel
@@ -10,9 +9,9 @@ from gensim.models.coherencemodel import CoherenceModel
 import nltk
 from wordcloud import WordCloud
 from collections import defaultdict
-import folium
-from streamlit_folium import folium_static
-from folium.plugins import MarkerCluster
+from nltk.sentiment import SentimentIntensityAnalyzer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from collections import defaultdict
 
 # Baixar recursos necessários do NLTK
 nltk.download('vader_lexicon')
@@ -84,66 +83,64 @@ def topicModeling(df, num_topics=5, passes=10):
     
     return lda_model
 
-# Função de análise de sentimento por estado
-def analyze_engagement_and_sentiment(df):
-    from nltk.sentiment import SentimentIntensityAnalyzer
-    from collections import defaultdict
+import pandas as pd
+from collections import defaultdict
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-    estados_eua = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
-    # paises_mundo = ["United States", "Canada", "Mexico", "Brazil", "United Kingdom", "France", "Germany", "Italy", "Spain", "Russia", "China", "Japan", "India", "Australia", "South Africa", "Argentina", "Chile", "Colombia", "Peru", "Venezuela", "Saudi Arabia", "South Korea", "Turkey", "Egypt", "Nigeria", "Pakistan", "Bangladesh", "Indonesia", "Philippines", "Vietnam"]
-
+def analyze_sentiment_by_state(df):
+    """
+    Analisa o sentimento das postagens mencionando estados dos EUA e retorna os estados com o sentimento mais positivo e negativo.
+    
+    Parâmetros:
+        df (pd.DataFrame): DataFrame contendo uma coluna de texto para análise de sentimentos.
+        
+    Retorno:
+        dict: Um dicionário contendo o estado com o sentimento mais positivo e o mais negativo.
+    """
+    # Inicializar o analisador de sentimentos
     analyzer = SentimentIntensityAnalyzer()
-    
-    def sentiment_by_region(df, region_list):
-        sentiment_dict = defaultdict(list)
-        coluna_texto = "texto_original" if "texto_original" in df.columns else "texto_limpo"
-        
-        for text in df[coluna_texto].dropna():
-            regions_mentioned = [region for region in region_list if region.lower() in text.lower()]
-            if regions_mentioned:
-                sentiment_score = analyzer.polarity_scores(text)["compound"]
-                for region in regions_mentioned:
-                    sentiment_dict[region].append(sentiment_score)
 
-        return {region: sum(scores) / len(scores) for region, scores in sentiment_dict.items() if scores}
-    # country_sentiments = sentiment_by_region(df, paises_mundo)
-    state_sentiments = sentiment_by_region(df, estados_eua)
+    # Lista de estados dos EUA
+    estados_eua = [
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
+        "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+        "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ]
 
-    return state_sentiments
+    # Dicionário para armazenar sentimentos por estado
+    sentiment_dict = defaultdict(list)
 
-# Função para exibir o mapa
-def display_sentiment_map(state_sentiments):
-    # Cria um mapa centrado nos EUA
-    map_center = [37.0902, -95.7129]  # Latitude e longitude dos EUA
-    sentiment_map = folium.Map(location=map_center, zoom_start=4)
-    
-    # Adiciona os sentimentos de cada estado ao mapa
-    for state, sentiment in state_sentiments.items():
-        # Aqui, você pode personalizar a cor com base no sentimento
-        color = 'green' if sentiment > 0 else 'red' if sentiment < 0 else 'gray'
-        folium.CircleMarker(location=[20, -100],  # Coordenadas aproximadas; substitua com coordenadas reais
-                            radius=10,
-                            color=color,
-                            fill=True,
-                            fill_opacity=0.6,
-                            popup=f"{state}: {sentiment:.2f}").add_to(sentiment_map)
+    # Definir a coluna de texto relevante
+    coluna_texto = "texto_original" if "texto_original" in df.columns else "texto_limpo"
 
-    st.write("### Mapa Interativo de Sentimentos por Estado")
-    folium_static(sentiment_map)
+    # Iterar sobre as postagens e calcular o sentimento
+    for text in df[coluna_texto].dropna():
+        states_mentioned = [state for state in estados_eua if state in text]
+        if states_mentioned:
+            sentiment_score = analyzer.polarity_scores(text)["compound"]
+            for state in states_mentioned:
+                sentiment_dict[state].append(sentiment_score)
 
-# Exemplo de carregamento do arquivo CSV
-# df_file = st.file_uploader("Carregue um arquivo CSV contendo os posts", type=["csv"])
+    # Calcular o sentimento médio por estado, evitando divisão por zero
+    state_sentiments = {
+        state: sum(scores) / len(scores) if scores else 0
+        for state, scores in sentiment_dict.items()
+    }
 
-# if df_file:
-#     df = pd.read_csv(df_file)
-    
-#     if 'texto_limpo' not in df.columns or 'tokens' not in df.columns:
-#         st.error("O arquivo CSV deve conter as colunas 'texto_limpo' e 'tokens'.")
-#     else:
-#         st.subheader("Análise de Sentimentos")
-#         df = analyzeSentiment(df)
-        
-#         st.subheader("Modelagem de Tópicos com LDA")
-#         num_topics = st.slider("Número de Tópicos", 2, 10, 5)
-#         passes = st.slider("Número de Passes", 5, 50, 10)
-#         topicModeling(df, num_topics, passes)
+    # Identificar os estados com sentimento mais positivo e negativo
+    if state_sentiments:
+        most_positive_state = max(state_sentiments, key=state_sentiments.get)
+        most_negative_state = min(state_sentiments, key=state_sentiments.get)
+
+        return {
+            "estado_mais_positivo": most_positive_state,
+            "sentimento_positivo": state_sentiments[most_positive_state],
+            "estado_mais_negativo": most_negative_state,
+            "sentimento_negativo": state_sentiments[most_negative_state]
+        }
+    else:
+        return {"mensagem": "Nenhum estado encontrado com sentimentos analisados."}

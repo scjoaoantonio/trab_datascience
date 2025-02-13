@@ -7,7 +7,7 @@ import utils.mining as mining
 import utils.arima_model as arima
 import utils.graph_utils as graph
 import utils.patterns as patterns
-import utils.mining as mining
+import utils.map as maps
 
 # ----------------------------
 # Função Principal da Página de Usuários
@@ -16,9 +16,9 @@ import utils.mining as mining
 def usersPage():
     st.title("Analisar Posts de um Usuário")
 
-    actor = st.text_input("Digite o @ do usuário:", value="cruzeiro.com.br", key="actor_input")
-    limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=10, key="limit_input")
-    iterations = st.number_input("Número de iterações:", min_value=1, max_value=100, value=3, key="iterations_input")
+    actor = st.text_input("Digite o @ do usuário:", value="nytimes.com", key="actor_input")
+    limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=100, key="limit_input")
+    iterations = st.number_input("Número de iterações:", min_value=1, max_value=100, value=100, key="iterations_input")
     forecast_days = st.radio("Quantidade de dias para previsão de engajamento:", (3, 7, 30), key="days_radio")
     
     language = st.radio("Escolha o idioma:", ('Português', 'Inglês'), key="language_radio")
@@ -77,16 +77,14 @@ def usersPage():
                 # Previsão de engajamento utilizando ARIMA
                 st.write("### Previsão de Engajamento para os Próximos Dias")
                 arima.train_arima(df, forecast_days)
-                # Treinar modelo e sugerir post ideal
-                melhor_hora, melhor_dia, melhor_tamanho = arima.analyze_best_post(df)                
-                st.write("### Postagem Ideal Sugerida")
-                st.write(f"Poste no dia {melhor_dia} às {melhor_hora}h com aproximadamente {melhor_tamanho} caracteres para obter maior engajamento.")
+
+                melhor_hora, melhor_dia, melhor_tamanho = arima.analyze_best_post(df)    
 
                 # Análise de sentimentos e modelagem de tópicos
                 mining.analyzeSentiment(df)
                 mining.topicModeling(df)
-                state_sentiments = mining.analyze_engagement_and_sentiment(df)
-                mining.display_sentiment_map(state_sentiments)
+                mining.analyze_sentiment_by_state(df)
+                maps.create_sentiment_map(df)
 
             else:
                 st.error("Nenhum dado encontrado para o usuário informado.")

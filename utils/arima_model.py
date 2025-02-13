@@ -74,6 +74,10 @@ def analyze_best_post(df):
     # Melhor comprimento de texto
     melhor_tamanho = df.groupby('num_caracteres')['total'].mean().idxmax()
     
+    # Treinar modelo e sugerir post ideal            
+    st.write("### Postagem Ideal Sugerida")
+    st.write(f"Poste no dia {melhor_dia} às {melhor_hora}h com aproximadamente {melhor_tamanho} caracteres para obter maior engajamento.")
+
     st.write(f"Melhor horário para postar: {melhor_hora}h")
     st.write(f"Melhor dia da semana: {melhor_dia}")
     st.write(f"Número ideal de caracteres: {melhor_tamanho}")
