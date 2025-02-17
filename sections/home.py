@@ -1,6 +1,8 @@
 import streamlit as st
 from PIL import Image
 import pandas as pd
+import folium
+from streamlit_folium import folium_static
 
 # ----------------------------
 # Função Principal da Página
@@ -277,7 +279,24 @@ def mainPage():
         """,
         unsafe_allow_html=True,
     )
-    # ----------------------------
+
+    # Criar o mapa centralizado nos EUA
+    mapa = folium.Map(location=[37.0902, -95.7129], zoom_start=4)
+    
+    # Dicionário com os estados selecionados
+    estados = {
+        "New Hampshire": [43.1939, -71.5724, "green"],
+        "Mississippi": [32.3547, -89.3985, "red"]
+    }
+    
+    # Adicionar marcadores ao mapa
+    for estado, (lat, lon, color) in estados.items():
+        folium.Marker(location=[lat, lon], popup=estado, tooltip=estado, icon=folium.Icon(color=color)).add_to(mapa)
+    
+    return mapa
+
+    # -------------
+    # ---------------
     # 🏷️ Modelagem de Tópicos
     # ----------------------------
     st.header("🏷️ Modelagem de Tópicos")
