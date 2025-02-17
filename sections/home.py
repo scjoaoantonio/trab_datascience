@@ -286,14 +286,18 @@ def mainPage():
         
         # Dicionário com os estados selecionados
         estados = {
-            "New Hampshire": [43.1939, -71.5724, "green"],
-            "Mississippi": [32.3547, -89.3985, "red"]
+            "New Hampshire": [43.1939, -71.5724, "green", 0.26],
+            "Mississippi": [32.3547, -89.3985, "red", -0.59]
         }
         
         # Adicionar marcadores ao mapa
-        for estado, (lat, lon, color) in estados.items():
-            folium.Marker(location=[lat, lon], popup=estado, tooltip=estado, icon=folium.Icon(color=color)).add_to(mapa)
-        
+        for estado, (lat, lon, color,score) in estados.items():
+            folium.Marker(
+                        location=[lat, lon], 
+                        popup=f"{estado} (Score: {score})", 
+                        tooltip=f"{estado} (Score: {score})", 
+                        icon=folium.Icon(color=color)
+                    ).add_to(mapa)
         return mapa
 
     folium_static(criar_mapa())
