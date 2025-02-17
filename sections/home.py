@@ -260,6 +260,23 @@ def mainPage():
                 unsafe_allow_html=True,
             )
 
+    # Informações sobre Sentimentos por Estado
+    st.subheaderheader("📍 Análise de Sentimentos por Estado")
+    st.write("Com base na análise de sentimentos, destacamos os estados com as avaliações mais positivas e negativas.")
+        
+    st.markdown(
+        """
+        <div class="card">
+            <h3>NYT - Estado com Sentimento Mais Positivo</h3>
+            <p class="positivo"><strong>New Hampshire (0.26)</strong></p>
+        </div>
+        <div class="card">
+            <h3>NYT - Estado com Sentimento Mais Negativo</h3>
+            <p class="negativo"><strong>Mississippi (-0.59)</strong></p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     # ----------------------------
     # 🏷️ Modelagem de Tópicos
     # ----------------------------
