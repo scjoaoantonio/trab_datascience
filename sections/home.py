@@ -261,7 +261,7 @@ def mainPage():
             )
 
     # Informações sobre Sentimentos por Estado
-    st.subheaderheader("📍 Análise de Sentimentos por Estado")
+    st.subheader("📍 Análise de Sentimentos por Estado")
     st.write("Com base na análise de sentimentos, destacamos os estados com as avaliações mais positivas e negativas.")
         
     st.markdown(
