@@ -1,8 +1,8 @@
 # Análise e Previsão de Postagens no Bluesky
 
-```
-https://blueskyspy.streamlit.app/
-```
+
+* Link: https://blueskyspy.streamlit.app/
+
 
 ## Descrição do Projeto
 
