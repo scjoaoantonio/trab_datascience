@@ -1,36 +1,48 @@
+# ---------------------------------------------------
+# 📦 Importações de Bibliotecas Necessárias
+# ---------------------------------------------------
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from nltk.sentiment import SentimentIntensityAnalyzer
-from gensim import corpora
-from gensim.models import LdaModel
-from gensim.models.coherencemodel import CoherenceModel
+from nltk.sentiment import SentimentIntensityAnalyzer  # Analisador de sentimentos VADER (NLTK)
+from gensim import corpora                            # Para criação de dicionário textual
+from gensim.models import LdaModel                    # Modelo de tópicos LDA
+from gensim.models.coherencemodel import CoherenceModel  # Avaliação de coerência dos tópicos
 import nltk
 from wordcloud import WordCloud
 from collections import defaultdict
-from nltk.sentiment import SentimentIntensityAnalyzer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from collections import defaultdict
 
-# Baixar recursos necessários do NLTK
-nltk.download('vader_lexicon')
+# ---------------------------------------------------
+# ⬇️ Download de Recursos do NLTK
+# ---------------------------------------------------
+nltk.download('vader_lexicon')  # Lexicon de sentimentos para o VADER
 
-# Configuração do Streamlit
+# ---------------------------------------------------
+# 🚀 Configuração da Página Streamlit
+# ---------------------------------------------------
 st.title("Análise de Sentimentos e Modelagem de Tópicos")
 
-# Função de análise de sentimentos
+# ---------------------------------------------------
+# 💬 Função: Análise de Sentimentos com VADER
+# ---------------------------------------------------
 def analyzeSentiment(df):
     sia = SentimentIntensityAnalyzer()
-
     df['texto_limpo'] = df['texto_limpo'].fillna('')
 
-    sentiments = df['texto_limpo'].apply(lambda text: sia.polarity_scores(text) if isinstance(text, str) else {"neg": 0, "neu": 0, "pos": 0, "compound": 0})
-    
+    # Aplica o analisador VADER a cada linha do DataFrame
+    sentiments = df['texto_limpo'].apply(
+        lambda text: sia.polarity_scores(text) if isinstance(text, str)
+        else {"neg": 0, "neu": 0, "pos": 0, "compound": 0}
+    )
+
+    # Combina os scores ao DataFrame original
     sentiment_df = pd.DataFrame(sentiments.tolist())
     df = pd.concat([df.reset_index(drop=True), sentiment_df.reset_index(drop=True)], axis=1)
     df = df.dropna(subset=['texto_limpo'])
 
+    # 📊 Visualização da distribuição dos sentimentos
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.histplot(df['compound'], bins=20, kde=True, color='blue', ax=ax)
     ax.set_title("Distribuição dos Sentimentos (VADER)", fontsize=14)
@@ -39,6 +51,7 @@ def analyzeSentiment(df):
     ax.grid(axis='y', linestyle='--', alpha=0.7)
     st.pyplot(fig)
 
+    # 📈 Exibe os 3 posts mais positivos e negativos
     top_positive = df.nlargest(3, 'compound')
     top_negative = df.nsmallest(3, 'compound')
 
@@ -52,25 +65,36 @@ def analyzeSentiment(df):
 
     return df
 
-# Função para modelagem de tópicos
+# ---------------------------------------------------
+# 🧠 Função: Modelagem de Tópicos com LDA (Gensim)
+# ---------------------------------------------------
 def topicModeling(df, num_topics=5, passes=10):
+    """
+    Aplica LDA para modelar os tópicos principais nos textos.
+    """
+    # 🧹 Garante que os tokens estejam em formato de lista
     if isinstance(df['tokens'].iloc[0], str):
         df['tokens'] = df['tokens'].apply(eval)
-    
+
+    # Prepara textos, dicionário e corpus
     texts = df['tokens'].tolist()
     dictionary = corpora.Dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
-    
+
+    # ⚙️ Treina o modelo LDA
     lda_model = LdaModel(corpus, num_topics=num_topics, id2word=dictionary, passes=passes, random_state=42)
-    
+
+    # 📋 Exibe os tópicos gerados
     topics = lda_model.print_topics(num_words=10)
     for topic in topics:
         st.write(f"**Tópico {topic[0]}:** {topic[1]}")
-    
+
+    # 📐 Avalia a coerência dos tópicos
     coherence_model = CoherenceModel(model=lda_model, texts=texts, dictionary=dictionary, coherence='c_v')
     coherence_score = coherence_model.get_coherence()
     st.write(f"**Coerência do modelo:** {coherence_score:.4f}")
-    
+
+    # ☁️ Gera WordCloud para cada tópico
     fig, axes = plt.subplots(1, num_topics, figsize=(20, 5))
     for i, topic in enumerate(topics):
         words = dict(lda_model.show_topic(i, 30))
@@ -78,29 +102,20 @@ def topicModeling(df, num_topics=5, passes=10):
         axes[i].imshow(wordcloud, interpolation="bilinear")
         axes[i].axis("off")
         axes[i].set_title(f"Tópico {i}")
-    
     st.pyplot(fig)
-    
+
     return lda_model
 
-import pandas as pd
-from collections import defaultdict
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-
+# ---------------------------------------------------
+# 🗺️ Função: Análise de Sentimentos por Estado
+# ---------------------------------------------------
 def analyze_sentiment_by_state(df):
     """
-    Analisa o sentimento das postagens mencionando estados dos EUA e retorna os estados com o sentimento mais positivo e negativo.
-    
-    Parâmetros:
-        df (pd.DataFrame): DataFrame contendo uma coluna de texto para análise de sentimentos.
-        
-    Retorno:
-        dict: Um dicionário contendo o estado com o sentimento mais positivo e o mais negativo.
+    Analisa sentimentos de textos mencionando estados dos EUA e retorna os extremos (positivo e negativo).
     """
-    # Inicializar o analisador de sentimentos
     analyzer = SentimentIntensityAnalyzer()
 
-    # Lista de estados dos EUA
+    # Lista completa de estados dos EUA
     estados_eua = [
         "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
         "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
@@ -111,13 +126,10 @@ def analyze_sentiment_by_state(df):
         "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
     ]
 
-    # Dicionário para armazenar sentimentos por estado
     sentiment_dict = defaultdict(list)
-
-    # Definir a coluna de texto relevante
     coluna_texto = "texto_original" if "texto_original" in df.columns else "texto_limpo"
 
-    # Iterar sobre as postagens e calcular o sentimento
+    # 🔁 Percorre os textos e associa sentimentos aos estados mencionados
     for text in df[coluna_texto].dropna():
         states_mentioned = [state for state in estados_eua if state in text]
         if states_mentioned:
@@ -125,13 +137,13 @@ def analyze_sentiment_by_state(df):
             for state in states_mentioned:
                 sentiment_dict[state].append(sentiment_score)
 
-    # Calcular o sentimento médio por estado, evitando divisão por zero
+    # 🧮 Calcula a média de sentimento por estado
     state_sentiments = {
         state: sum(scores) / len(scores) if scores else 0
         for state, scores in sentiment_dict.items()
     }
 
-    # Identificar os estados com sentimento mais positivo e negativo
+    # 🔍 Identifica os estados com maior e menor sentimento
     if state_sentiments:
         most_positive_state = max(state_sentiments, key=state_sentiments.get)
         most_negative_state = min(state_sentiments, key=state_sentiments.get)
