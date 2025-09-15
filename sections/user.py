@@ -21,7 +21,7 @@ def usersPage():
     # 🔧 Inputs de configuração da análise
     actor = st.text_input("Digite o @ do usuário:", value="nytimes.com", key="actor_input")
     limit = st.number_input("Quantidade de posts por iteração:", min_value=1, max_value=100, value=100, key="limit_input")
-    iterations = st.number_input("Número de iterações:", min_value=1, max_value=100, value=100, key="iterations_input")
+    iterations = st.number_input("Número de iterações:", min_value=1, value=100, key="iterations_input")
     forecast_days = st.radio("Quantidade de dias para previsão de engajamento:", (3, 7, 30), key="days_radio")
     
     language = st.radio("Escolha o idioma:", ('Português', 'Inglês'), key="language_radio")
